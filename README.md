@@ -1,2 +1,2 @@
- <!-- NACOS
-by Aliyu Abubakar, Abubakar Muhammad Jungudo, Abdulsamad Kalejaiye -->
+ NACOS portal
+by Aliyu Abubakar, Abubakar Muhammad Jungudo, Abdulsamad Kalejaiye 
