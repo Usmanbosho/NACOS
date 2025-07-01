@@ -1,153 +1,187 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>AI Club - NACOS ATBU</title>
+  <title>NACOS - ATBU | AI Club</title>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-  <!-- Fonts & Icons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous"/>
+  <link href="img/ictunitskillbuilderpayment.png" rel="icon">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" />
+
+  <!-- CSS Files -->
+  <link rel="stylesheet" href="css/open-iconic-bootstrap.min.css">
   <link rel="stylesheet" href="css/animate.css">
+  <link rel="stylesheet" href="css/owl.carousel.min.css">
+  <link rel="stylesheet" href="css/owl.theme.default.min.css">
+  <link rel="stylesheet" href="css/magnific-popup.css">
   <link rel="stylesheet" href="css/aos.css">
+  <link rel="stylesheet" href="css/ionicons.min.css">
+  <link rel="stylesheet" href="css/flaticon.css">
+  <link rel="stylesheet" href="css/icomoon.css">
   <link rel="stylesheet" href="css/style.css">
 
   <style>
-    body {
-      font-family: 'Arial', sans-serif;
-      background-color: #f9f9f9;
+    .member-img {
+      width: 150px;
+      height: 150px;
+      object-fit: cover;
+      border-radius: 50%;
+      border: 4px solid #28a745;
+      margin-bottom: 10px;
     }
-    .club-header {
-      background: url('img/LOGO.jpg') no-repeat center center;
-      background-size: cover;
-      height: 250px;
-      position: relative;
-    }
-    .club-header::after {
-      content: '';
-      position: absolute;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: rgba(0, 128, 0, 0.6);
-    }
-    .club-header h2 {
-      position: relative;
-      z-index: 2;
-      color: white;
-      text-align: center;
-      padding-top: 90px;
-      font-size: 2.5rem;
-    }
-    .club-section {
-      padding: 40px 15px;
-    }
-    .leadership, .members {
-      display: flex;
-      justify-content: center;
-      gap: 30px;
-      flex-wrap: wrap;
-      margin-bottom: 50px;
-    }
-    .person-card {
-      background: white;
-      border-radius: 10px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-      text-align: center;
-      width: 220px;
-      transition: transform 0.3s;
-    }
-    .person-card:hover {
-      transform: scale(1.05);
-    }
-    .person-card img {
-      width: 120px;
-      height: 120px;
-      border-radius: 100px;
-      margin-top: 20px;
-    }
-    .person-card h5 {
-      margin: 15px 0 5px;
+    .card-title {
       font-weight: bold;
-    }
-    .person-card p {
-      color: gray;
-      margin-bottom: 15px;
-    }
-    .section-title {
-      text-align: center;
-      margin-bottom: 30px;
+      color: #28a745;
     }
     .club-description {
-      max-width: 800px;
-      margin: auto;
-      font-size: 1.1rem;
-      color: #333;
-      text-align: center;
-      margin-bottom: 50px;
+      font-size: 18px;
+      margin-bottom: 40px;
     }
   </style>
 </head>
-<body>
+<body data-spy="scroll" data-target=".site-navbar-target" data-offset="300">
 
-  <!-- Hero -->
-  <div class="club-header">
-    <h2>Computer Programming / AI Club</h2>
+  <!-- Topbar -->
+  <div class="py-1 top" style="background-color: green">
+    <div class="container">
+      <div class="row no-gutters d-flex align-items-center">
+        <div class="col-md d-flex align-items-center">
+          <div class="icon mr-2"><span class="icon-phone2"></span></div>
+          <span class="text">+234 814 587 2795</span>
+        </div>
+        <div class="col-md d-flex align-items-center">
+          <div class="icon mr-2"><span class="icon-paper-plane"></span></div>
+          <span class="text">nacos@atbu.edu.ng</span>
+        </div>
+        <div class="col-md d-flex justify-content-end">
+          <p class="mb-0 register-link"><a href="login/signup.php" class="mr-3">Sign Up</a><a href="login/">Sign In</a></p>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <!-- Club Vision / Mission -->
-  <section class="club-section" data-aos="fade-up">
-    <div class="club-description">
-      Our mission is to empower students with cutting-edge knowledge and practical experience in artificial intelligence and software development through collaboration, innovation, and mentorship.
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg ftco_navbar ftco-navbar-light site-navbar-target" id="ftco-navbar">
+    <div class="container">
+      <a class="navbar-brand" href="index.html">
+        <img src="img/ictunitskillbuilderpayment.png" width="60" height="60" style="border-radius: 100px;"> NACOS - ATBU
+      </a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#ftco-nav">
+        <span class="oi oi-menu"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="ftco-nav">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item"><a href="index.html" class="nav-link">Home</a></li>
+          <li class="nav-item"><a href="excos.html" class="nav-link">Excos</a></li>
+          <li class="nav-item"><a href="clubs.html" class="nav-link">Clubs</a></li>
+          <li class="nav-item"><a href="staffs.html" class="nav-link">Staffs</a></li>
+          <li class="nav-item"><a href="about.html" class="nav-link">About Us</a></li>
+          <li class="nav-item"><a href="contact.html" class="nav-link">Contact Us</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero-wrap" style="background-image: url('img/LOGO.jpg'); height: 250px;">
+    <div class="overlay"></div>
+  </section>
+
+  <!-- AI Club Page -->
+  <section class="ftco-section bg-light">
+    <div class="container">
+      <div class="row justify-content-center mb-5">
+        <div class="col-md-10 text-center ftco-animate">
+          <h2 class="mb-4">AI / Programming Club</h2>
+          <p class="club-description">Empowering students with practical coding and artificial intelligence skills to solve real-world problems and foster innovation in the digital space.</p>
+        </div>
+      </div>
+
+      <!-- President & Secretary -->
+      <div class="row justify-content-center mb-5">
+        <div class="col-md-4 text-center ftco-animate">
+          <img src="img/avatar.png" alt="President" class="member-img">
+          <h5 class="card-title">John Doe</h5>
+          <p>Club President</p>
+        </div>
+        <div class="col-md-4 text-center ftco-animate">
+          <img src="img/avatar.png" alt="Secretary" class="member-img">
+          <h5 class="card-title">Jane Smith</h5>
+          <p>Club Secretary</p>
+        </div>
+      </div>
+
+      <!-- Members Grid -->
+      <div class="row text-center">
+        <!-- 8 sample members -->
+        {% for i in range(8) %}
+        <div class="col-md-3 mb-4 ftco-animate">
+          <img src="img/avatar.png" alt="Member" class="member-img">
+          <h6>Member Name</h6>
+        </div>
+        {% endfor %}
+      </div>
     </div>
   </section>
 
-  <!-- Leadership -->
-  <section class="club-section" data-aos="fade-up">
-    <h3 class="section-title">Club Leadership</h3>
-    <div class="leadership">
-      <div class="person-card">
-        <img src="img/avatar.png" alt="President">
-        <h5>John AIson</h5>
-        <p>President</p>
+  <!-- Footer -->
+  <footer class="ftco-footer ftco-section img" style="background-image: url(images/footer-bg.jpg);">
+    <div class="overlay"></div>
+    <div class="container-fluid px-md-5">
+      <div class="row mb-5">
+        <div class="col-md">
+          <div class="ftco-footer-widget mb-4">
+            <h2 class="ftco-heading-2">NACOS - ATBU</h2>
+            <p>Our Social Media Links</p>
+            <ul class="ftco-footer-social list-unstyled mt-5 d-flex">
+              <li class="ftco-animate mr-3"><a href="#" style="background-color: green;" class="d-flex align-items-center justify-content-center"><i class="fab fa-twitter text-white"></i></a></li>
+              <li class="ftco-animate mr-3"><a href="#" style="background-color: green;" class="d-flex align-items-center justify-content-center"><i class="fab fa-facebook-f text-white"></i></a></li>
+              <li class="ftco-animate"><a href="#" style="background-color: green;" class="d-flex align-items-center justify-content-center"><i class="fab fa-instagram text-white"></i></a></li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="col-md">
+          <div class="ftco-footer-widget mb-4 ml-md-4">
+            <h2 class="ftco-heading-2">Links</h2>
+            <ul class="list-unstyled">
+              <li><a href="index.html" style="color: green;"><span class="icon-long-arrow-right mr-2"></span>Home</a></li>
+              <li><a href="excos.html" style="color: green;"><span class="icon-long-arrow-right mr-2"></span>Excos</a></li>
+              <li><a href="clubs.html" style="color: green;"><span class="icon-long-arrow-right mr-2"></span>Clubs</a></li>
+              <li><a href="staffs.html" style="color: green;"><span class="icon-long-arrow-right mr-2"></span>Staffs</a></li>
+              <li><a href="about.html" style="color: green;"><span class="icon-long-arrow-right mr-2"></span>About Us</a></li>
+              <li><a href="contact.html" style="color: green;"><span class="icon-long-arrow-right mr-2"></span>Contact Us</a></li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="col-md">
+          <div class="ftco-footer-widget mb-4">
+            <h2 class="ftco-heading-2">Have a Questions?</h2>
+            <div class="block-23 mb-3">
+              <ul>
+                <li><span class="icon icon-map-marker"></span><span class="text">ATBU, Gubi Campus, Bauchi</span></li>
+                <li><a href="#"><span class="icon icon-phone"></span><span class="text">+234 814 587 2795</span></a></li>
+                <li><a href="#"><span class="icon icon-envelope"></span><span class="text">nacos@atbu.edu.ng</span></a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="person-card">
-        <img src="img/avatar.png" alt="Secretary">
-        <h5>Mary Neural</h5>
-        <p>Secretary</p>
+
+      <div class="row">
+        <div class="col-md-12 text-center">
+          Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved |
+          <a href="#" target="_blank" style="color: green;">NACOS</a>
+        </div>
       </div>
     </div>
-  </section>
+  </footer>
 
-  <!-- Members -->
-  <section class="club-section" data-aos="fade-up">
-    <h3 class="section-title">Club Members</h3>
-    <div class="members">
-      <div class="person-card">
-        <img src="img/avatar.png" alt="Member">
-        <h5>Alex Byte</h5>
-        <p>Member</p>
-      </div>
-      <div class="person-card">
-        <img src="img/avatar.png" alt="Member">
-        <h5>Lisa Loop</h5>
-        <p>Member</p>
-      </div>
-      <div class="person-card">
-        <img src="img/avatar.png" alt="Member">
-        <h5>David Code</h5>
-        <p>Member</p>
-      </div>
-      <div class="person-card">
-        <img src="img/avatar.png" alt="Member">
-        <h5>Sarah Debug</h5>
-        <p>Member</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- AOS Animation JS -->
+  <!-- Scripts -->
+  <script src="js/jquery.min.js"></script>
+  <script src="js/bootstrap.min.js"></script>
   <script src="js/aos.js"></script>
-  <script>
-    AOS.init({ duration: 1000 });
-  </script>
+  <script src="js/main.js"></script>
 </body>
 </html>
