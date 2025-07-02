@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>NACOS ATBU - Student Sign Up</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      margin: 0;
+      padding: 0;
+    }
+    .signup-container {
+      max-width: 500px;
+      margin: 50px auto;
+      background: white;
+      padding: 30px;
+      box-shadow: 0 0 15px rgba(0, 128, 0, 0.3);
+      border-radius: 8px;
+    }
+    .logo {
+      display: block;
+      margin: 0 auto 20px;
+      width: 120px;
+    }
+    h2 {
+      text-align: center;
+      color: green;
+      margin-bottom: 20px;
+    }
+    form input, form select {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0 16px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    form input[type="submit"] {
+      background-color: green;
+      color: white;
+      cursor: pointer;
+      border: none;
+      transition: background 0.3s ease;
+    }
+    form input[type="submit"]:hover {
+      background-color: darkgreen;
+    }
+    .note {
+      font-size: 0.9rem;
+      color: #888;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="signup-container">
+    <img src="img/ictunitskillbuilderpayment.png" alt="NACOS Logo" class="logo">
+    <h2>NACOS ATBU Student Sign-Up</h2>
+    <form action="process_signup.php" method="POST" enctype="multipart/form-data">
+      <label for="name">Full Name</label>
+      <input type="text" name="name" id="name" required>
+
+      <label for="regno">Registration Number</label>
+      <input type="text" name="regno" id="regno" required>
+
+      <label for="course">Course</label>
+      <input type="text" name="course" id="course" required>
+
+      <label for="year">Year of Admission</label>
+      <input type="number" name="year" id="year" min="2000" max="2099" required>
+
+      <label for="level">Level</label>
+      <select name="level" id="level" required>
+        <option value="">-- Select Level --</option>
+        <option value="100">100 Level</option>
+        <option value="200">200 Level</option>
+        <option value="300">300 Level</option>
+        <option value="400">400 Level</option>
+        <option value="500">500 Level</option>
+      </select>
+
+      <label for="photo">Profile Picture (Max: 1MB)</label>
+      <input type="file" name="photo" id="photo" accept="image/*" required>
+
+      <input type="submit" value="Submit">
+    </form>
+    <p class="note">By signing up, you agree to NACOS ATBU's data policy.</p>
+  </div>
+
+</body>
+</html>
