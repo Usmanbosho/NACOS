@@ -2,77 +2,88 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>NACOS ATBU - Student Sign Up</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NACOS Sign Up</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      background: #f4f4f4;
-      margin: 0;
-      padding: 0;
+      background: #f0f0f0;
+      padding: 20px;
     }
-    .signup-container {
+    .container {
       max-width: 500px;
-      margin: 50px auto;
       background: white;
       padding: 30px;
-      box-shadow: 0 0 15px rgba(0, 128, 0, 0.3);
-      border-radius: 8px;
+      margin: auto;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
     }
-    .logo {
+    .container img {
       display: block;
       margin: 0 auto 20px;
-      width: 120px;
+      width: 100px;
     }
-    h2 {
+    .container h2 {
       text-align: center;
       color: green;
       margin-bottom: 20px;
     }
-    form input, form select {
+    input, select {
       width: 100%;
       padding: 10px;
-      margin: 8px 0 16px;
-      border: 1px solid #ccc;
+      margin-top: 10px;
+      margin-bottom: 20px;
       border-radius: 5px;
+      border: 1px solid #ccc;
     }
-    form input[type="submit"] {
-      background-color: green;
+    button {
+      background: green;
       color: white;
-      cursor: pointer;
       border: none;
-      transition: background 0.3s ease;
+      padding: 12px;
+      width: 100%;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
     }
-    form input[type="submit"]:hover {
-      background-color: darkgreen;
+    button:hover {
+      background: darkgreen;
     }
-    .note {
-      font-size: 0.9rem;
-      color: #888;
-      text-align: center;
+    label {
+      font-weight: bold;
     }
   </style>
 </head>
 <body>
 
-  <div class="signup-container">
-    <img src="img/ictunitskillbuilderpayment.png" alt="NACOS Logo" class="logo">
-    <h2>NACOS ATBU Student Sign-Up</h2>
+  <div class="container">
+    <img src="img/ictunitskillbuilderpayment.png" alt="NACOS Logo">
+    <h2>NACOS Sign Up</h2>
     <form action="process_signup.php" method="POST" enctype="multipart/form-data">
+      <label for="photo">Profile Picture (Max: 1MB)</label>
+      <input type="file" name="photo" accept="image/*" required>
+
       <label for="name">Full Name</label>
-      <input type="text" name="name" id="name" required>
+      <input type="text" name="name" required>
 
       <label for="regno">Registration Number</label>
-      <input type="text" name="regno" id="regno" required>
+      <input type="text" name="regno" required>
 
       <label for="course">Course</label>
-      <input type="text" name="course" id="course" required>
+      <select name="course" required>
+        <option value="">-- Select Course --</option>
+        <option>Computer Science</option>
+        <option>Software Engineering</option>
+        <option>Cyber Security</option>
+        <option>Artificial Intelligence</option>
+        <option>Information Technology</option>
+        <option>Information Science</option>
+      </select>
 
       <label for="year">Year of Admission</label>
-      <input type="number" name="year" id="year" min="2000" max="2099" required>
+      <input type="number" name="year" min="2010" max="2099" required>
 
       <label for="level">Level</label>
-      <select name="level" id="level" required>
+      <select name="level" required>
         <option value="">-- Select Level --</option>
         <option value="100">100 Level</option>
         <option value="200">200 Level</option>
@@ -81,12 +92,8 @@
         <option value="500">500 Level</option>
       </select>
 
-      <label for="photo">Profile Picture (Max: 1MB)</label>
-      <input type="file" name="photo" id="photo" accept="image/*" required>
-
-      <input type="submit" value="Submit">
+      <button type="submit">Sign Up</button>
     </form>
-    <p class="note">By signing up, you agree to NACOS ATBU's data policy.</p>
   </div>
 
 </body>
