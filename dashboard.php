@@ -1,139 +1,83 @@
 <?php
 session_start();
-if (!isset($_SESSION['admin_logged_in'])) {
-    header('Location: login.php');
+include 'db_connect.php';
+
+if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true) {
+    header("Location: login.php");
     exit();
 }
 
-require_once '../config.php';
+$updateSuccess = isset($_GET['updated']) && $_GET['updated'] == 1;
+$deleteSuccess = isset($_GET['deleted']) && $_GET['deleted'] == 1;
 
-// Total students
-$total = $conn->query("SELECT COUNT(*) FROM students")->fetch_row()[0];
-
-// Count per level
-$levels = ['100 Level', '200 Level', '300 Level', '400 Level', '500 Level'];
-$levelCounts = [];
-foreach ($levels as $level) {
-    $stmt = $conn->prepare("SELECT COUNT(*) FROM students WHERE level = ?");
-    $stmt->bind_param("s", $level);
-    $stmt->execute();
-    $stmt->bind_result($count);
-    $stmt->fetch();
-    $levelCounts[$level] = $count;
-    $stmt->close();
-}
-
-// Fetch all students
-$students = $conn->query("SELECT * FROM students ORDER BY id DESC");
-?>
-
-<!DOCTYPE html>
-<html lang="en">
+$result = $conn->query("SELECT * FROM students");
+?><!DOCTYPE html><html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Admin Dashboard - NACOS</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <style>
-    body {
-      background: #f0f2f5;
-    }
-    .container {
-      margin-top: 40px;
-    }
-    .card {
-      border-radius: 10px;
-    }
-    .table img {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-    }
-  </style>
 </head>
 <body>
-
-<div class="container">
-  <h3 class="mb-4 text-center">NACOS Admin Dashboard</h3>
-
-  <div class="row text-white mb-4">
-    <div class="col-md-3">
-      <div class="card bg-primary p-3">
-        <h5>Total Students</h5>
-        <h3><?= $total ?></h3>
-      </div>
-    </div>
-    <?php foreach ($levelCounts as $level => $count): ?>
-    <div class="col-md-3 mt-2">
-      <div class="card bg-success p-3">
-        <h6><?= $level ?></h6>
-        <h4><?= $count ?></h4>
-      </div>
-    </div>
-    <?php endforeach; ?>
-  </div>
-
-  <div class="card p-4">
-    <h4>All Students</h4>
-    <table class="table table-bordered table-striped mt-3">
-      <thead class="table-dark">
+  <div class="container mt-5">
+    <h2 class="mb-4">Student Records</h2>
+    <table class="table table-bordered">
+      <thead class="table-success">
         <tr>
-          <th>Picture</th>
+          <th>ID</th>
           <th>Name</th>
-          <th>Reg. Number</th>
+          <th>Reg Number</th>
           <th>Course</th>
-          <th>Year of Admission</th>
+          <th>Admission Year</th>
           <th>Level</th>
+          <th>Image</th>
           <th>Actions</th>
         </tr>
       </thead>
       <tbody>
-        <?php while ($row = $students->fetch_assoc()): ?>
+        <?php while($row = $result->fetch_assoc()): ?>
         <tr>
-          <td><img src="../uploads/<?= htmlspecialchars($row['photo']) ?>" alt="Photo"></td>
+          <td><?= $row['id'] ?></td>
           <td><?= htmlspecialchars($row['name']) ?></td>
           <td><?= htmlspecialchars($row['reg_number']) ?></td>
           <td><?= htmlspecialchars($row['course']) ?></td>
-          <td><?= htmlspecialchars($row['admission_year']) ?></td>
-          <td><?= htmlspecialchars($row['level']) ?></td>
+          <td><?= $row['admission_year'] ?></td>
+          <td><?= $row['level'] ?></td>
+          <td><img src="uploads/<?= $row['image'] ?>" width="50"></td>
           <td>
-            <a href="edit_student.php?id=<?= $row['id'] ?>" class="btn btn-sm btn-warning">Edit</a>
-            <button class="btn btn-sm btn-danger" onclick="confirmDelete(<?= $row['id'] ?>)">Delete</button>
+            <a href="edit_form.php?id=<?= $row['id'] ?>" class="btn btn-warning btn-sm">Edit</a>
+            <a href="delete_student.php?id=<?= $row['id'] ?>" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure?')">Delete</a>
           </td>
         </tr>
         <?php endwhile; ?>
       </tbody>
     </table>
-  </div>
-</div>
-
-<!-- Delete Confirmation Modal -->
-<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header bg-danger text-white">
-        <h5 class="modal-title" id="deleteModalLabel">Confirm Deletion</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+  </div>  <!-- Toast Container -->  <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+    <!-- Update Toast -->
+    <div id="updateToast" class="toast align-items-center text-bg-success border-0 mb-2" role="alert" aria-live="assertive" aria-atomic="true">
+      <div class="d-flex">
+        <div class="toast-body">
+          ✅ Student record updated successfully!
+        </div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
       </div>
-      <div class="modal-body">
-        Are you sure you want to delete this student? This action cannot be undone.
-      </div>
-      <div class="modal-footer">
-        <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-        <a href="#" id="deleteConfirmBtn" class="btn btn-danger">Yes, Delete</a>
-      </div>
+    </div><!-- Delete Toast -->
+<div id="deleteToast" class="toast align-items-center text-bg-danger border-0" role="alert" aria-live="assertive" aria-atomic="true">
+  <div class="d-flex">
+    <div class="toast-body">
+      🗑️ Student deleted successfully!
     </div>
+    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
   </div>
 </div>
 
-<!-- Scripts -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-function confirmDelete(id) {
-  const deleteBtn = document.getElementById("deleteConfirmBtn");
-  deleteBtn.href = "delete_student.php?id=" + id;
-  new bootstrap.Modal(document.getElementById('deleteModal')).show();
-}
-</script>
+  </div>  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>  <script>
+    <?php if ($updateSuccess): ?>
+      new bootstrap.Toast(document.getElementById('updateToast')).show();
+    <?php endif; ?>
 
-</body>
+    <?php if ($deleteSuccess): ?>
+      new bootstrap.Toast(document.getElementById('deleteToast')).show();
+    <?php endif; ?>
+  </script></body>
 </html>
