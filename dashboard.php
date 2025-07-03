@@ -1,108 +1,100 @@
 <?php
 session_start();
-if (!isset($_SESSION['admin_logged_in'])) {
-  header('Location: login.php');
-  exit();
+if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true) {
+    header("Location: login.php");
+    exit();
 }
-include '../config.php';
+require_once 'db.php';
 
-// Count total students
-$totalQuery = mysqli_query($conn, "SELECT COUNT(*) as total FROM students");
-$total = mysqli_fetch_assoc($totalQuery)['total'];
-
-// Count students per level
-$levels = [100, 200, 300, 400, 500];
-$levelCounts = [];
-foreach ($levels as $level) {
-  $query = mysqli_query($conn, "SELECT COUNT(*) as total FROM students WHERE level = '$level'");
-  $levelCounts[$level] = mysqli_fetch_assoc($query)['total'];
-}
-
-// Fetch student list
-$students = mysqli_query($conn, "SELECT * FROM students ORDER BY id DESC");
-?><!DOCTYPE html><html>
+// Fetch students
+$stmt = $conn->prepare("SELECT * FROM students ORDER BY id DESC");
+$stmt->execute();
+$students = $stmt->fetchAll(PDO::FETCH_ASSOC);
+?><!DOCTYPE html><html lang="en">
 <head>
-  <title>Admin Dashboard</title>
-  <link rel="stylesheet" href="../assets/bootstrap.min.css">
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard - NACOS</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="icon" href="../img/ictunitskillbuilderpayment.png">
+  <style>
+    body {
+      padding: 30px;
+    }
+    .toast {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 9999;
+    }
+  </style>
 </head>
 <body>
-<div class="container mt-5">
-  <h3 class="mb-4 text-center">Welcome, Admin</h3>  <div class="row text-center mb-4">
-    <div class="col-md-3">
-      <div class="card">
-        <div class="card-body">
-          <h5>Total Students</h5>
-          <p class="display-4"><?php echo $total; ?></p>
-        </div>
+  <div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h2>Admin Dashboard - NACOS</h2>
+      <a href="logout.php" class="btn btn-danger">Logout</a>
+    </div><?php if (isset($_SESSION['toast_message'])): ?>
+  <div class="toast align-items-center text-white bg-success border-0 show" role="alert">
+    <div class="d-flex">
+      <div class="toast-body">
+        <?= $_SESSION['toast_message'] ?>
       </div>
+      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
     </div>
-    <?php foreach ($levelCounts as $lvl => $count): ?>
-    <div class="col-md-2">
-      <div class="card">
-        <div class="card-body">
-          <h6><?php echo $lvl; ?> Level</h6>
-          <p class="h4"><?php echo $count; ?></p>
-        </div>
-      </div>
-    </div>
-    <?php endforeach; ?>
-  </div>  <div class="mb-3">
-    <a href="search_student.php" class="btn btn-outline-primary">Search Student</a>
-    <a href="export_excel.php" class="btn btn-outline-success">Export to Excel</a>
-    <a href="print_pdf.php" class="btn btn-outline-danger">Print PDF</a>
-    <a href="logout.php" class="btn btn-outline-secondary float-right">Logout</a>
-  </div>  <div class="table-responsive">
-    <table class="table table-bordered table-striped">
-      <thead class="thead-dark">
+  </div>
+  <?php unset($_SESSION['toast_message']); ?>
+<?php endif; ?>
+
+<div class="mb-3">
+  <a href="search.php" class="btn btn-info"><i class="fas fa-search"></i> Search Student</a>
+  <a href="export_excel.php" class="btn btn-success"><i class="fas fa-file-excel"></i> Export to Excel</a>
+  <a href="export_pdf.php" class="btn btn-danger"><i class="fas fa-file-pdf"></i> Export to PDF</a>
+</div>
+
+<h4>Total Students: <?= count($students) ?></h4>
+<div class="row mb-4">
+  <?php
+    $levels = ['100', '200', '300', '400', '500'];
+    foreach ($levels as $lvl) {
+      $count = array_filter($students, fn($s) => $s['level'] == $lvl);
+      echo "<div class='col-md-2'><div class='card text-center'><div class='card-body'><strong>{$lvl} Level</strong><br>" . count($count) . "</div></div></div>";
+    }
+  ?>
+</div>
+
+<div class="table-responsive">
+  <table class="table table-bordered table-hover">
+    <thead class="table-dark">
+      <tr>
+        <th>Picture</th>
+        <th>Name</th>
+        <th>Reg No</th>
+        <th>Course</th>
+        <th>Year</th>
+        <th>Level</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <?php foreach ($students as $student): ?>
         <tr>
-          <th>Picture</th>
-          <th>Name</th>
-          <th>Reg No</th>
-          <th>Course</th>
-          <th>Level</th>
-          <th>Year</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <?php while ($row = mysqli_fetch_assoc($students)): ?>
-        <tr>
-          <td><img src="../uploads/<?php echo $row['picture']; ?>" width="50" height="50" style="border-radius: 50px;"></td>
-          <td><?php echo $row['name']; ?></td>
-          <td><?php echo $row['reg_number']; ?></td>
-          <td><?php echo $row['course']; ?></td>
-          <td><?php echo $row['level']; ?></td>
-          <td><?php echo $row['admission_year']; ?></td>
+          <td><img src="../uploads/<?= htmlspecialchars($student['photo']) ?>" width="60" height="60" style="border-radius:50px"></td>
+          <td><?= htmlspecialchars($student['name']) ?></td>
+          <td><?= htmlspecialchars($student['regno']) ?></td>
+          <td><?= htmlspecialchars($student['course']) ?></td>
+          <td><?= htmlspecialchars($student['admission_year']) ?></td>
+          <td><?= htmlspecialchars($student['level']) ?></td>
           <td>
-            <a href="edit_student.php?id=<?php echo $row['id']; ?>" class="btn btn-sm btn-success">Edit</a>
-            <a href="delete_student.php?id=<?php echo $row['id']; ?>" class="btn btn-sm btn-danger delete-btn">Delete</a>
+            <a href="edit_student.php?id=<?= $student['id'] ?>" class="btn btn-primary btn-sm">Edit</a>
+            <a href="delete_student.php?id=<?= $student['id'] ?>" onclick="return confirm('Are you sure?')" class="btn btn-danger btn-sm">Delete</a>
           </td>
         </tr>
-        <?php endwhile; ?>
-      </tbody>
-    </table>
-  </div>
-</div><script>
-  // SweetAlert for delete action
-  document.querySelectorAll('.delete-btn').forEach(button => {
-    button.addEventListener('click', function(e) {
-      e.preventDefault();
-      const href = this.getAttribute('href');
-      Swal.fire({
-        title: 'Are you sure?',
-        text: "This record will be permanently deleted!",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#d33',
-        cancelButtonColor: '#3085d6',
-        confirmButtonText: 'Yes, delete it!'
-      }).then((result) => {
-        if (result.isConfirmed) {
-          window.location.href = href;
-        }
-      });
-    });
-  });
-</script></body>
+      <?php endforeach; ?>
+    </tbody>
+  </table>
+</div>
+
+  </div>  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script></body>
 </html>
