@@ -1,83 +1,108 @@
 <?php
 session_start();
-include 'db_connect.php';
+if (!isset($_SESSION['admin_logged_in'])) {
+  header('Location: login.php');
+  exit();
+}
+include '../config.php';
 
-if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true) {
-    header("Location: login.php");
-    exit();
+// Count total students
+$totalQuery = mysqli_query($conn, "SELECT COUNT(*) as total FROM students");
+$total = mysqli_fetch_assoc($totalQuery)['total'];
+
+// Count students per level
+$levels = [100, 200, 300, 400, 500];
+$levelCounts = [];
+foreach ($levels as $level) {
+  $query = mysqli_query($conn, "SELECT COUNT(*) as total FROM students WHERE level = '$level'");
+  $levelCounts[$level] = mysqli_fetch_assoc($query)['total'];
 }
 
-$updateSuccess = isset($_GET['updated']) && $_GET['updated'] == 1;
-$deleteSuccess = isset($_GET['deleted']) && $_GET['deleted'] == 1;
-
-$result = $conn->query("SELECT * FROM students");
-?><!DOCTYPE html><html lang="en">
+// Fetch student list
+$students = mysqli_query($conn, "SELECT * FROM students ORDER BY id DESC");
+?><!DOCTYPE html><html>
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin Dashboard</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/bootstrap.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
-  <div class="container mt-5">
-    <h2 class="mb-4">Student Records</h2>
-    <table class="table table-bordered">
-      <thead class="table-success">
+<div class="container mt-5">
+  <h3 class="mb-4 text-center">Welcome, Admin</h3>  <div class="row text-center mb-4">
+    <div class="col-md-3">
+      <div class="card">
+        <div class="card-body">
+          <h5>Total Students</h5>
+          <p class="display-4"><?php echo $total; ?></p>
+        </div>
+      </div>
+    </div>
+    <?php foreach ($levelCounts as $lvl => $count): ?>
+    <div class="col-md-2">
+      <div class="card">
+        <div class="card-body">
+          <h6><?php echo $lvl; ?> Level</h6>
+          <p class="h4"><?php echo $count; ?></p>
+        </div>
+      </div>
+    </div>
+    <?php endforeach; ?>
+  </div>  <div class="mb-3">
+    <a href="search_student.php" class="btn btn-outline-primary">Search Student</a>
+    <a href="export_excel.php" class="btn btn-outline-success">Export to Excel</a>
+    <a href="print_pdf.php" class="btn btn-outline-danger">Print PDF</a>
+    <a href="logout.php" class="btn btn-outline-secondary float-right">Logout</a>
+  </div>  <div class="table-responsive">
+    <table class="table table-bordered table-striped">
+      <thead class="thead-dark">
         <tr>
-          <th>ID</th>
+          <th>Picture</th>
           <th>Name</th>
-          <th>Reg Number</th>
+          <th>Reg No</th>
           <th>Course</th>
-          <th>Admission Year</th>
           <th>Level</th>
-          <th>Image</th>
+          <th>Year</th>
           <th>Actions</th>
         </tr>
       </thead>
       <tbody>
-        <?php while($row = $result->fetch_assoc()): ?>
+        <?php while ($row = mysqli_fetch_assoc($students)): ?>
         <tr>
-          <td><?= $row['id'] ?></td>
-          <td><?= htmlspecialchars($row['name']) ?></td>
-          <td><?= htmlspecialchars($row['reg_number']) ?></td>
-          <td><?= htmlspecialchars($row['course']) ?></td>
-          <td><?= $row['admission_year'] ?></td>
-          <td><?= $row['level'] ?></td>
-          <td><img src="uploads/<?= $row['image'] ?>" width="50"></td>
+          <td><img src="../uploads/<?php echo $row['picture']; ?>" width="50" height="50" style="border-radius: 50px;"></td>
+          <td><?php echo $row['name']; ?></td>
+          <td><?php echo $row['reg_number']; ?></td>
+          <td><?php echo $row['course']; ?></td>
+          <td><?php echo $row['level']; ?></td>
+          <td><?php echo $row['admission_year']; ?></td>
           <td>
-            <a href="edit_form.php?id=<?= $row['id'] ?>" class="btn btn-warning btn-sm">Edit</a>
-            <a href="delete_student.php?id=<?= $row['id'] ?>" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure?')">Delete</a>
+            <a href="edit_student.php?id=<?php echo $row['id']; ?>" class="btn btn-sm btn-success">Edit</a>
+            <a href="delete_student.php?id=<?php echo $row['id']; ?>" class="btn btn-sm btn-danger delete-btn">Delete</a>
           </td>
         </tr>
         <?php endwhile; ?>
       </tbody>
     </table>
-  </div>  <!-- Toast Container -->  <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
-    <!-- Update Toast -->
-    <div id="updateToast" class="toast align-items-center text-bg-success border-0 mb-2" role="alert" aria-live="assertive" aria-atomic="true">
-      <div class="d-flex">
-        <div class="toast-body">
-          ✅ Student record updated successfully!
-        </div>
-        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
-      </div>
-    </div><!-- Delete Toast -->
-<div id="deleteToast" class="toast align-items-center text-bg-danger border-0" role="alert" aria-live="assertive" aria-atomic="true">
-  <div class="d-flex">
-    <div class="toast-body">
-      🗑️ Student deleted successfully!
-    </div>
-    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
   </div>
-</div>
-
-  </div>  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>  <script>
-    <?php if ($updateSuccess): ?>
-      new bootstrap.Toast(document.getElementById('updateToast')).show();
-    <?php endif; ?>
-
-    <?php if ($deleteSuccess): ?>
-      new bootstrap.Toast(document.getElementById('deleteToast')).show();
-    <?php endif; ?>
-  </script></body>
+</div><script>
+  // SweetAlert for delete action
+  document.querySelectorAll('.delete-btn').forEach(button => {
+    button.addEventListener('click', function(e) {
+      e.preventDefault();
+      const href = this.getAttribute('href');
+      Swal.fire({
+        title: 'Are you sure?',
+        text: "This record will be permanently deleted!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Yes, delete it!'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          window.location.href = href;
+        }
+      });
+    });
+  });
+</script></body>
 </html>
