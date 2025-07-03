@@ -1,102 +1,139 @@
 <?php
 session_start();
-require_once '../db.php';
-
-// Fetch total users
-$total_sql = "SELECT COUNT(*) as total FROM students";
-$total_result = mysqli_query($conn, $total_sql);
-$total_row = mysqli_fetch_assoc($total_result);
-$total_students = $total_row['total'];
-
-// Fetch users per level
-$levels = [100, 200, 300, 400, 500];
-$level_counts = [];
-
-foreach ($levels as $lvl) {
-  $sql = "SELECT COUNT(*) as count FROM students WHERE level = '$lvl'";
-  $res = mysqli_query($conn, $sql);
-  $row = mysqli_fetch_assoc($res);
-  $level_counts[$lvl] = $row['count'];
+if (!isset($_SESSION['admin_logged_in'])) {
+    header('Location: login.php');
+    exit();
 }
 
-// Fetch all users
-$students_sql = "SELECT * FROM students ORDER BY year_of_admission DESC";
-$students_result = mysqli_query($conn, $students_sql);
+require_once '../config.php';
+
+// Total students
+$total = $conn->query("SELECT COUNT(*) FROM students")->fetch_row()[0];
+
+// Count per level
+$levels = ['100 Level', '200 Level', '300 Level', '400 Level', '500 Level'];
+$levelCounts = [];
+foreach ($levels as $level) {
+    $stmt = $conn->prepare("SELECT COUNT(*) FROM students WHERE level = ?");
+    $stmt->bind_param("s", $level);
+    $stmt->execute();
+    $stmt->bind_result($count);
+    $stmt->fetch();
+    $levelCounts[$level] = $count;
+    $stmt->close();
+}
+
+// Fetch all students
+$students = $conn->query("SELECT * FROM students ORDER BY id DESC");
 ?>
+
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8">
   <title>Admin Dashboard - NACOS</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <style>
-    body { background: #f9f9f9; }
-    .container { padding-top: 40px; }
-    .card { box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-    img.avatar { width: 50px; height: 50px; border-radius: 50%; }
+    body {
+      background: #f0f2f5;
+    }
+    .container {
+      margin-top: 40px;
+    }
+    .card {
+      border-radius: 10px;
+    }
+    .table img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+    }
   </style>
 </head>
 <body>
-<div class="container">
-  <h2 class="text-center mb-4">Admin Panel - NACOS</h2>
 
-  <!-- Statistics -->
-  <div class="row mb-4">
+<div class="container">
+  <h3 class="mb-4 text-center">NACOS Admin Dashboard</h3>
+
+  <div class="row text-white mb-4">
     <div class="col-md-3">
-      <div class="card text-white bg-primary mb-3">
-        <div class="card-body">
-          <h5 class="card-title">Total Students</h5>
-          <p class="card-text fs-4"><?= $total_students ?></p>
-        </div>
+      <div class="card bg-primary p-3">
+        <h5>Total Students</h5>
+        <h3><?= $total ?></h3>
       </div>
     </div>
-    <?php foreach ($level_counts as $level => $count): ?>
-      <div class="col-md-2">
-        <div class="card bg-success text-white mb-3">
-          <div class="card-body">
-            <h6 class="card-title"><?= $level ?> Level</h6>
-            <p class="card-text fs-5"><?= $count ?></p>
-          </div>
-        </div>
+    <?php foreach ($levelCounts as $level => $count): ?>
+    <div class="col-md-3 mt-2">
+      <div class="card bg-success p-3">
+        <h6><?= $level ?></h6>
+        <h4><?= $count ?></h4>
       </div>
+    </div>
     <?php endforeach; ?>
   </div>
 
-  <!-- Student Table -->
-  <div class="card">
-    <div class="card-header bg-dark text-white">
-      Registered Students
-    </div>
-    <div class="card-body p-0">
-      <table class="table table-bordered table-hover mb-0">
-        <thead class="table-light">
-          <tr>
-            <th>#</th>
-            <th>Avatar</th>
-            <th>Name</th>
-            <th>Reg. No</th>
-            <th>Course</th>
-            <th>Level</th>
-            <th>Year</th>
-          </tr>
-        </thead>
-        <tbody>
-        <?php
-        $sn = 1;
-        while($row = mysqli_fetch_assoc($students_result)): ?>
-          <tr>
-            <td><?= $sn++ ?></td>
-            <td><img src="../uploads/<?= $row['profile_picture'] ?>" class="avatar"></td>
-            <td><?= $row['name'] ?></td>
-            <td><?= $row['reg_number'] ?></td>
-            <td><?= $row['course'] ?></td>
-            <td><?= $row['level'] ?></td>
-            <td><?= $row['year_of_admission'] ?></td>
-          </tr>
+  <div class="card p-4">
+    <h4>All Students</h4>
+    <table class="table table-bordered table-striped mt-3">
+      <thead class="table-dark">
+        <tr>
+          <th>Picture</th>
+          <th>Name</th>
+          <th>Reg. Number</th>
+          <th>Course</th>
+          <th>Year of Admission</th>
+          <th>Level</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <?php while ($row = $students->fetch_assoc()): ?>
+        <tr>
+          <td><img src="../uploads/<?= htmlspecialchars($row['photo']) ?>" alt="Photo"></td>
+          <td><?= htmlspecialchars($row['name']) ?></td>
+          <td><?= htmlspecialchars($row['reg_number']) ?></td>
+          <td><?= htmlspecialchars($row['course']) ?></td>
+          <td><?= htmlspecialchars($row['admission_year']) ?></td>
+          <td><?= htmlspecialchars($row['level']) ?></td>
+          <td>
+            <a href="edit_student.php?id=<?= $row['id'] ?>" class="btn btn-sm btn-warning">Edit</a>
+            <button class="btn btn-sm btn-danger" onclick="confirmDelete(<?= $row['id'] ?>)">Delete</button>
+          </td>
+        </tr>
         <?php endwhile; ?>
-        </tbody>
-      </table>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header bg-danger text-white">
+        <h5 class="modal-title" id="deleteModalLabel">Confirm Deletion</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        Are you sure you want to delete this student? This action cannot be undone.
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <a href="#" id="deleteConfirmBtn" class="btn btn-danger">Yes, Delete</a>
+      </div>
     </div>
   </div>
 </div>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+function confirmDelete(id) {
+  const deleteBtn = document.getElementById("deleteConfirmBtn");
+  deleteBtn.href = "delete_student.php?id=" + id;
+  new bootstrap.Modal(document.getElementById('deleteModal')).show();
+}
+</script>
+
 </body>
 </html>
