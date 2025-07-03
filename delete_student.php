@@ -1,18 +1,35 @@
 <?php
-// delete_student.php
-include('db.php');
-
-if (!isset($_GET['id'])) {
-    header("Location: dashboard.php");
+session_start();
+if (!isset($_SESSION['admin_logged_in'])) {
+    header('Location: login.php');
     exit();
 }
 
-$id = intval($_GET['id']);
-$query = "DELETE FROM students WHERE id = $id";
+require_once '../config.php';
 
-if (mysqli_query($conn, $query)) {
-    header("Location: dashboard.php?message=Student+deleted+successfully");
-} else {
-    echo "Error: " . mysqli_error($conn);
+if (!isset($_GET['id'])) {
+    echo "Invalid request.";
+    exit();
 }
-?>
+
+$id = $_GET['id'];
+
+// Delete photo file
+$stmt = $conn->prepare("SELECT photo FROM students WHERE id = ?");
+$stmt->bind_param("i", $id);
+$stmt->execute();
+$stmt->bind_result($photo);
+$stmt->fetch();
+$stmt->close();
+
+if ($photo && file_exists("../uploads/$photo")) {
+    unlink("../uploads/$photo");
+}
+
+// Delete student record
+$stmt = $conn->prepare("DELETE FROM students WHERE id = ?");
+$stmt->bind_param("i", $id);
+$stmt->execute();
+
+header("Location: dashboard.php");
+exit();
