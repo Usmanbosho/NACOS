@@ -1,100 +1,112 @@
 <?php
 session_start();
-if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true) {
-    header("Location: login.php");
+
+// Check if admin is logged in
+if (!isset($_SESSION['admin_logged_in'])) {
+    header('Location: login.php');
     exit();
 }
-require_once 'db.php';
 
-// Fetch students
-$stmt = $conn->prepare("SELECT * FROM students ORDER BY id DESC");
-$stmt->execute();
-$students = $stmt->fetchAll(PDO::FETCH_ASSOC);
+include('../config/db.php');
+
+// Fetch all students
+$students = mysqli_query($conn, "SELECT * FROM students ORDER BY id DESC");
+
+// Count by level
+$level_counts = [];
+$levels = ['100 Level', '200 Level', '300 Level', '400 Level', '500 Level'];
+foreach ($levels as $level) {
+    $query = mysqli_query($conn, "SELECT COUNT(*) as count FROM students WHERE level = '$level'");
+    $row = mysqli_fetch_assoc($query);
+    $level_counts[$level] = $row['count'];
+}
+
+$total = array_sum($level_counts);
 ?><!DOCTYPE html><html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin Dashboard - NACOS</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  <link rel="icon" href="../img/ictunitskillbuilderpayment.png">
-  <style>
-    body {
-      padding: 30px;
-    }
-    .toast {
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      z-index: 9999;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - NACOS</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-  <div class="container">
+<div class="container py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-      <h2>Admin Dashboard - NACOS</h2>
-      <a href="logout.php" class="btn btn-danger">Logout</a>
-    </div><?php if (isset($_SESSION['toast_message'])): ?>
-  <div class="toast align-items-center text-white bg-success border-0 show" role="alert">
-    <div class="d-flex">
-      <div class="toast-body">
-        <?= $_SESSION['toast_message'] ?>
-      </div>
-      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        <h2 class="text-success">NACOS Admin Dashboard</h2>
+        <a href="logout.php" class="btn btn-danger">Logout</a>
+    </div><!-- Toasts -->
+<?php if (isset($_SESSION['message'])): ?>
+<div class="toast-container position-fixed bottom-0 end-0 p-3">
+    <div class="toast align-items-center text-white bg-success border-0 show" role="alert">
+        <div class="d-flex">
+            <div class="toast-body">
+                <?= $_SESSION['message']; unset($_SESSION['message']); ?>
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+        </div>
     </div>
-  </div>
-  <?php unset($_SESSION['toast_message']); ?>
+</div>
 <?php endif; ?>
 
-<div class="mb-3">
-  <a href="search.php" class="btn btn-info"><i class="fas fa-search"></i> Search Student</a>
-  <a href="export_excel.php" class="btn btn-success"><i class="fas fa-file-excel"></i> Export to Excel</a>
-  <a href="export_pdf.php" class="btn btn-danger"><i class="fas fa-file-pdf"></i> Export to PDF</a>
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card border-success">
+            <div class="card-body text-center">
+                <h5>Total Students</h5>
+                <h2><?= $total ?></h2>
+            </div>
+        </div>
+    </div>
+    <?php foreach ($level_counts as $lvl => $count): ?>
+    <div class="col-md-2">
+        <div class="card border-primary">
+            <div class="card-body text-center">
+                <h6><?= $lvl ?></h6>
+                <h4><?= $count ?></h4>
+            </div>
+        </div>
+    </div>
+    <?php endforeach; ?>
 </div>
 
-<h4>Total Students: <?= count($students) ?></h4>
-<div class="row mb-4">
-  <?php
-    $levels = ['100', '200', '300', '400', '500'];
-    foreach ($levels as $lvl) {
-      $count = array_filter($students, fn($s) => $s['level'] == $lvl);
-      echo "<div class='col-md-2'><div class='card text-center'><div class='card-body'><strong>{$lvl} Level</strong><br>" . count($count) . "</div></div></div>";
-    }
-  ?>
+<div class="mb-3">
+    <a href="search.php" class="btn btn-outline-secondary"><i class="fas fa-search"></i> Search Student</a>
+    <a href="export_excel.php" class="btn btn-outline-success"><i class="fas fa-file-excel"></i> Export to Excel</a>
+    <a href="export_pdf.php" class="btn btn-outline-danger"><i class="fas fa-file-pdf"></i> Export to PDF</a>
 </div>
 
 <div class="table-responsive">
-  <table class="table table-bordered table-hover">
-    <thead class="table-dark">
-      <tr>
-        <th>Picture</th>
-        <th>Name</th>
-        <th>Reg No</th>
-        <th>Course</th>
-        <th>Year</th>
-        <th>Level</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      <?php foreach ($students as $student): ?>
-        <tr>
-          <td><img src="../uploads/<?= htmlspecialchars($student['photo']) ?>" width="60" height="60" style="border-radius:50px"></td>
-          <td><?= htmlspecialchars($student['name']) ?></td>
-          <td><?= htmlspecialchars($student['regno']) ?></td>
-          <td><?= htmlspecialchars($student['course']) ?></td>
-          <td><?= htmlspecialchars($student['admission_year']) ?></td>
-          <td><?= htmlspecialchars($student['level']) ?></td>
-          <td>
-            <a href="edit_student.php?id=<?= $student['id'] ?>" class="btn btn-primary btn-sm">Edit</a>
-            <a href="delete_student.php?id=<?= $student['id'] ?>" onclick="return confirm('Are you sure?')" class="btn btn-danger btn-sm">Delete</a>
-          </td>
-        </tr>
-      <?php endforeach; ?>
-    </tbody>
-  </table>
+    <table class="table table-bordered table-striped">
+        <thead class="table-success">
+            <tr>
+                <th>Picture</th>
+                <th>Name</th>
+                <th>Reg No</th>
+                <th>Course</th>
+                <th>Year of Admission</th>
+                <th>Level</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        <?php while ($row = mysqli_fetch_assoc($students)): ?>
+            <tr>
+                <td><img src="../uploads/<?= $row['photo'] ?>" width="50" height="50" style="border-radius: 50%;"></td>
+                <td><?= htmlspecialchars($row['name']) ?></td>
+                <td><?= $row['reg_number'] ?></td>
+                <td><?= $row['course'] ?></td>
+                <td><?= $row['year_admission'] ?></td>
+                <td><?= $row['level'] ?></td>
+                <td>
+                    <a href="edit_student.php?id=<?= $row['id'] ?>" class="btn btn-sm btn-warning">Edit</a>
+                    <a href="delete_student.php?id=<?= $row['id'] ?>" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this student?');">Delete</a>
+                </td>
+            </tr>
+        <?php endwhile; ?>
+        </tbody>
+    </table>
 </div>
 
-  </div>  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script></body>
+</div><script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script></body>
 </html>
