@@ -90,66 +90,70 @@
   </div>
 
   <script>
-  const client = supabase.createClient(
-    "https://aiygcjjztfoahsyeeswl.supabase.co",
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFpeWdjamp6dGZvYWhzeWVlc3dsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE4ODQzNjksImV4cCI6MjA2NzQ2MDM2OX0.WEgoghfUroMhoaw84x0V6LXcvf3reh6xJEI3nQQHZM8"
-  );
+    const client = supabase.createClient(
+      "https://aiygcjjztfoahsyeeswl.supabase.co",
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFpeWdjamp6dGZvYWhzeWVlc3dsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE4ODQzNjksImV4cCI6MjA2NzQ2MDM2OX0.WEgoghfUroMhoaw84x0V6LXcvf3reh6xJEI3nQQHZM8"
+    );
 
-  const CLOUDINARY_URL = "https://api.cloudinary.com/v1_1/dgy6x0ky4/image/upload";
-  const CLOUDINARY_PRESET = "unsigned_upload";
+    const CLOUDINARY_URL = "https://api.cloudinary.com/v1_1/dgy6x0ky4/image/upload";
+    const CLOUDINARY_PRESET = "unsigned_upload"; // Make sure this matches your Cloudinary preset
 
-  document.getElementById('signupForm').addEventListener('submit', async function(e) {
-    e.preventDefault();
-    const statusText = document.getElementById('status');
-    statusText.style.color = "black";
-    statusText.textContent = "📤 Uploading image...";
+    document.getElementById('signupForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const statusText = document.getElementById('status');
+      statusText.style.color = "black";
+      statusText.textContent = "📤 Uploading image...";
 
-    const photo = document.getElementById('photo').files[0];
-    const formData = new FormData();
-    formData.append("file", photo);
-    formData.append("upload_preset", CLOUDINARY_PRESET);
+      const photo = document.getElementById('photo').files[0];
+      const formData = new FormData();
+      formData.append("file", photo);
+      formData.append("upload_preset", CLOUDINARY_PRESET);
 
-    try {
-      const cloudRes = await fetch(CLOUDINARY_URL, {
-        method: "POST",
-        body: formData
-      });
+      try {
+        const cloudRes = await fetch(CLOUDINARY_URL, {
+          method: "POST",
+          body: formData
+        });
 
-      const cloudData = await cloudRes.json();
-      const photo_url = cloudData.secure_url;
+        const cloudData = await cloudRes.json();
+        const photo_url = cloudData.secure_url;
 
-      if (!photo_url) throw new Error("Cloudinary upload failed.");
+        if (!photo_url) throw new Error("Cloudinary upload failed.");
 
-      statusText.textContent = "⏳ Saving to Supabase...";
+        statusText.textContent = "⏳ Saving to Supabase...";
 
-      const name = document.getElementById('name').value;
-      const regno = document.getElementById('regno').value;
-      const course = document.getElementById('course').value;
-      const year = parseInt(document.getElementById('year').value);
-      const level = parseInt(document.getElementById('level').value);
+        const name = document.getElementById('name').value;
+        const regno = document.getElementById('regno').value;
+        const course = document.getElementById('course').value;
+        const year = parseInt(document.getElementById('year').value);
+        const level = parseInt(document.getElementById('level').value);
 
-      const { error } = await client
-        .from('students')
-        .insert([{ name, regno, course, year, level, photo_url }]);
+        const { error } = await client
+          .from('students')
+          .insert([{ name, regno, course, year, level, photo_url }]);
 
-      if (error) {
-        console.error(error);
-        statusText.textContent = "❌ Error: " + error.message;
+        if (error) {
+          console.error(error);
+          statusText.textContent = "❌ Error: " + error.message;
+          statusText.style.color = "red";
+        } else {
+          statusText.textContent = "✅ Student registered successfully! Redirecting...";
+          statusText.style.color = "green";
+          document.getElementById('signupForm').reset();
+
+          // 🚀 Redirect to dashboard.html
+          setTimeout(() => {
+            window.location.href = "dashboard.html";
+          }, 1500);
+        }
+
+      } catch (err) {
+        console.error(err);
+        statusText.textContent = "❌ Upload failed: " + err.message;
         statusText.style.color = "red";
-      } else {
-        statusText.textContent = "✅ Student registered successfully!";
-        statusText.style.color = "green";
-        document.getElementById('signupForm').reset();
       }
-
-    } catch (err) {
-      console.error(err);
-      statusText.textContent = "❌ Upload failed: " + err.message;
-      statusText.style.color = "red";
-    }
-  });
-</script>
-
+    });
+  </script>
 
 </body>
 </html>

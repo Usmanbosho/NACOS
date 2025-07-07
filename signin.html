@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Student Login</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #e8f5e9;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .box {
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 20px rgba(0,128,0,0.1);
+      width: 100%;
+      max-width: 400px;
+    }
+
+    h2 {
+      text-align: center;
+      color: green;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background: green;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: darkgreen;
+    }
+
+    .error {
+      color: red;
+      text-align: center;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="box">
+    <h2>NACOS Login</h2>
+    <input type="text" id="regno" placeholder="Registration Number" required>
+    <input type="password" id="password" placeholder="Password" required>
+    <button onclick="login()">Login</button>
+    <p class="error" id="errorText"></p>
+  </div>
+
+  <script>
+    const client = supabase.createClient(
+      "https://aiygcjjztfoahsyeeswl.supabase.co",
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFpeWdjamp6dGZvYWhzeWVlc3dsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE4ODQzNjksImV4cCI6MjA2NzQ2MDM2OX0.WEgoghfUroMhoaw84x0V6LXcvf3reh6xJEI3nQQHZM8"
+    );
+
+    async function login() {
+      const regno = document.getElementById('regno').value.trim().toUpperCase();
+      const password = document.getElementById('password').value.trim();
+      const errorText = document.getElementById('errorText');
+
+      if (!regno || !password) {
+        errorText.textContent = "Please fill in both fields.";
+        return;
+      }
+
+      const { data, error } = await client
+        .from('students')
+        .select("*")
+        .eq("regno", regno)
+        .eq("password", password)
+        .single();
+
+      if (error || !data) {
+        errorText.textContent = "❌ Invalid Reg No or Password.";
+      } else {
+        localStorage.setItem("regno", regno);
+        window.location.href = "dashboard.html";
+      }
+    }
+  </script>
+</body>
+</html>

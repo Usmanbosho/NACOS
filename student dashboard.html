@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>NACOS Student Dashboard</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary-green: #2e7d32;
+      --light-green: #e8f5e9;
+      --text-dark: #1b1b1b;
+      --text-muted: #4b5563;
+      --card-bg: #ffffff;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--light-green);
+      padding: 20px;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    header h1 {
+      font-size: 28px;
+      color: var(--primary-green);
+      font-weight: 700;
+    }
+
+    header p {
+      color: var(--text-muted);
+      font-size: 14px;
+    }
+
+    .status {
+      text-align: center;
+      font-weight: bold;
+      margin-bottom: 20px;
+      color: var(--text-dark);
+    }
+
+    .student-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+      gap: 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .student-card {
+      background: var(--card-bg);
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 6px 16px rgba(0, 128, 0, 0.1);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      text-align: center;
+    }
+
+    .student-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 24px rgba(0, 128, 0, 0.15);
+    }
+
+    .student-card img {
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-bottom: 10px;
+      border: 3px solid var(--primary-green);
+    }
+
+    .student-card h2 {
+      color: var(--primary-green);
+      font-size: 18px;
+      margin-bottom: 8px;
+    }
+
+    .student-card p {
+      font-size: 14px;
+      color: var(--text-muted);
+      margin: 4px 0;
+    }
+
+    footer {
+      text-align: center;
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 40px;
+    }
+
+    @media (max-width: 600px) {
+      header h1 {
+        font-size: 24px;
+      }
+
+      .student-card {
+        padding: 15px;
+      }
+
+      .student-card h2 {
+        font-size: 16px;
+      }
+
+      .student-card p {
+        font-size: 13px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>📋 NACOS Student Dashboard</h1>
+    <p>View all registered NACOS students</p>
+  </header>
+
+  <p class="status" id="status">Loading student records...</p>
+
+  <div class="student-list" id="studentList"></div>
+
+  <footer>
+    &copy; 2025 NACOS ATBU. All rights reserved.
+  </footer>
+
+  <script>
+    const client = supabase.createClient(
+      "https://aiygcjjztfoahsyeeswl.supabase.co",
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFpeWdjamp6dGZvYWhzeWVlc3dsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE4ODQzNjksImV4cCI6MjA2NzQ2MDM2OX0.WEgoghfUroMhoaw84x0V6LXcvf3reh6xJEI3nQQHZM8"
+    );
+
+    async function loadStudents() {
+      const statusText = document.getElementById("status");
+      const list = document.getElementById("studentList");
+
+      try {
+        const { data, error } = await client
+          .from("students")
+          .select("*")
+          .order("id", { ascending: false });
+
+        if (error) {
+          statusText.textContent = "❌ Error fetching students: " + error.message;
+          statusText.style.color = "red";
+          return;
+        }
+
+        if (!data || data.length === 0) {
+          statusText.textContent = "No student records found.";
+          return;
+        }
+
+        statusText.textContent = `✅ Loaded ${data.length} student(s).`;
+
+        data.forEach(student => {
+          const card = document.createElement("div");
+          card.className = "student-card";
+
+          card.innerHTML = `
+            <img src="${student.photo_url}" alt="Profile Photo" />
+            <h2>${student.name}</h2>
+            <p><strong>Reg No:</strong> ${student.regno}</p>
+            <p><strong>Course:</strong> ${student.course}</p>
+            <p><strong>Year:</strong> ${student.year}</p>
+            <p><strong>Level:</strong> ${student.level}</p>
+          `;
+
+          list.appendChild(card);
+        });
+
+      } catch (err) {
+        statusText.textContent = "❌ Unexpected error: " + err.message;
+        statusText.style.color = "red";
+        console.error(err);
+      }
+    }
+
+    loadStudents();
+  </script>
+
+</body>
+</html>
