@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>NACOS Sign Up</title>
+  <meta charset="UTF-8" />
+  <title>NACOS Supabase Signup</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -17,12 +18,7 @@
       border-radius: 10px;
       box-shadow: 0 0 15px rgba(0,0,0,0.1);
     }
-    .container img {
-      display: block;
-      margin: 0 auto 20px;
-      width: 100px;
-    }
-    .container h2 {
+    h2 {
       text-align: center;
       color: green;
       margin-bottom: 20px;
@@ -51,39 +47,32 @@
     label {
       font-weight: bold;
     }
+    #status {
+      text-align: center;
+      margin-top: 15px;
+      font-weight: bold;
+    }
   </style>
 </head>
 <body>
 
   <div class="container">
-    <img src="img/ictunitskillbuilderpayment.png" alt="NACOS Logo">
     <h2>NACOS Sign Up</h2>
-    <form action="process_signup.php" method="POST" enctype="multipart/form-data">
-      <label for="photo">Profile Picture (Max: 1MB)</label>
-      <input type="file" name="photo" accept="image/*" required>
-
+    <form id="signupForm">
       <label for="name">Full Name</label>
-      <input type="text" name="name" required>
+      <input type="text" id="name" required>
 
       <label for="regno">Registration Number</label>
-      <input type="text" name="regno" required>
+      <input type="text" id="regno" required>
 
       <label for="course">Course</label>
-      <select name="course" required>
-        <option value="">-- Select Course --</option>
-        <option>Computer Science</option>
-        <option>Software Engineering</option>
-        <option>Cyber Security</option>
-        <option>Artificial Intelligence</option>
-        <option>Information Technology</option>
-        <option>Information Science</option>
-      </select>
+      <input type="text" id="course" required>
 
       <label for="year">Year of Admission</label>
-      <input type="number" name="year" min="2010" max="2099" required>
+      <input type="number" id="year" min="2010" max="2099" required>
 
       <label for="level">Level</label>
-      <select name="level" required>
+      <select id="level" required>
         <option value="">-- Select Level --</option>
         <option value="100">100 Level</option>
         <option value="200">200 Level</option>
@@ -92,9 +81,75 @@
         <option value="500">500 Level</option>
       </select>
 
+      <label for="photo">Profile Picture</label>
+      <input type="file" id="photo" accept="image/*" required>
+
       <button type="submit">Sign Up</button>
     </form>
+    <p id="status"></p>
   </div>
+
+  <script>
+  const client = supabase.createClient(
+    "https://aiygcjjztfoahsyeeswl.supabase.co",
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFpeWdjamp6dGZvYWhzeWVlc3dsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE4ODQzNjksImV4cCI6MjA2NzQ2MDM2OX0.WEgoghfUroMhoaw84x0V6LXcvf3reh6xJEI3nQQHZM8"
+  );
+
+  const CLOUDINARY_URL = "https://api.cloudinary.com/v1_1/dgy6x0ky4/image/upload";
+  const CLOUDINARY_PRESET = "unsigned_upload";
+
+  document.getElementById('signupForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const statusText = document.getElementById('status');
+    statusText.style.color = "black";
+    statusText.textContent = "📤 Uploading image...";
+
+    const photo = document.getElementById('photo').files[0];
+    const formData = new FormData();
+    formData.append("file", photo);
+    formData.append("upload_preset", CLOUDINARY_PRESET);
+
+    try {
+      const cloudRes = await fetch(CLOUDINARY_URL, {
+        method: "POST",
+        body: formData
+      });
+
+      const cloudData = await cloudRes.json();
+      const photo_url = cloudData.secure_url;
+
+      if (!photo_url) throw new Error("Cloudinary upload failed.");
+
+      statusText.textContent = "⏳ Saving to Supabase...";
+
+      const name = document.getElementById('name').value;
+      const regno = document.getElementById('regno').value;
+      const course = document.getElementById('course').value;
+      const year = parseInt(document.getElementById('year').value);
+      const level = parseInt(document.getElementById('level').value);
+
+      const { error } = await client
+        .from('students')
+        .insert([{ name, regno, course, year, level, photo_url }]);
+
+      if (error) {
+        console.error(error);
+        statusText.textContent = "❌ Error: " + error.message;
+        statusText.style.color = "red";
+      } else {
+        statusText.textContent = "✅ Student registered successfully!";
+        statusText.style.color = "green";
+        document.getElementById('signupForm').reset();
+      }
+
+    } catch (err) {
+      console.error(err);
+      statusText.textContent = "❌ Upload failed: " + err.message;
+      statusText.style.color = "red";
+    }
+  });
+</script>
+
 
 </body>
 </html>
