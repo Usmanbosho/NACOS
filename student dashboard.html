@@ -6,19 +6,14 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
+    /* [Styles remain unchanged] */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
       font-family: Arial, sans-serif;
       background: green;
       color: #333;
       padding: 30px;
     }
-
     .dashboard {
       max-width: 1200px;
       margin: auto;
@@ -26,33 +21,28 @@
       flex-direction: column;
       gap: 30px;
     }
-
     .top-nav {
       text-align: left;
       color: white;
       font-size: 20px;
       font-weight: bold;
     }
-
     .cards-container {
       display: flex;
       flex-wrap: wrap;
       gap: 30px;
       justify-content: center;
     }
-
     .card {
       background: white;
       border-radius: 10px;
       padding: 25px;
       box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
     }
-
     .profile-card {
       width: 300px;
       text-align: center;
     }
-
     .profile-card img {
       width: 100px;
       height: 100px;
@@ -60,18 +50,15 @@
       object-fit: cover;
       margin-bottom: 10px;
     }
-
     .profile-name {
       font-weight: bold;
       font-size: 18px;
     }
-
     .profile-info {
       color: #555;
       font-size: 14px;
       margin: 4px 0;
     }
-
     .btn {
       margin-top: 20px;
       background: green;
@@ -82,17 +69,14 @@
       border-radius: 6px;
       cursor: pointer;
     }
-
     .status-card {
       width: 400px;
     }
-
     .status-title {
       font-weight: bold;
       font-size: 18px;
       margin-bottom: 8px;
     }
-
     .status-bar {
       height: 4px;
       width: 100%;
@@ -101,7 +85,6 @@
       border-radius: 4px;
       position: relative;
     }
-
     .status-bar::after {
       content: "";
       position: absolute;
@@ -112,7 +95,6 @@
       background: green;
       border-radius: 4px;
     }
-
     .status-step {
       background: #f9f9f9;
       padding: 10px 15px;
@@ -123,13 +105,11 @@
       align-items: center;
       font-size: 14px;
     }
-
     @media (max-width: 768px) {
       .cards-container {
         flex-direction: column;
         align-items: center;
       }
-
       .profile-card, .status-card {
         width: 100%;
         max-width: 400px;
@@ -143,7 +123,7 @@
     <div class="top-nav">My Home</div>
 
     <div class="cards-container">
-      <!-- Left: Profile Card -->
+      <!-- Profile Card -->
       <div class="card profile-card">
         <div class="profile-header" id="semester">📅 SECOND SEMESTER, 2024/2025 SESSION</div>
         <img id="photo" src="https://placehold.co/100x100" alt="Student Photo" />
@@ -153,13 +133,12 @@
         <button class="btn">Proceed to Dashboard</button>
       </div>
 
-      <!-- Right: Status Card -->
+      <!-- Status Card -->
       <div class="card status-card">
         <div class="status-title" id="welcome">Welcome back</div>
         <div class="status-bar"></div>
-
-        <div class="status-step" id="item1">Your course: <span id="course"></span></div>
-        <div class="status-step" id="item2">Your level: <span id="level"></span></div>
+        <div class="status-step">Your course: <span id="course"></span></div>
+        <div class="status-step">Your level: <span id="level"></span></div>
       </div>
     </div>
   </div>
@@ -171,27 +150,26 @@
     );
 
     async function loadStudent() {
-      const { data: { user }, error: userError } = await client.auth.getUser();
+      const regno = localStorage.getItem("regno");
 
-      if (!user) {
-        document.getElementById("fullName").textContent = "Not logged in";
-        document.getElementById("courseInfo").textContent = "No data available";
+      if (!regno) {
+        document.getElementById("fullName").textContent = "You are not logged in.";
         return;
       }
 
       const { data, error } = await client
         .from("students")
         .select("*")
-        .eq("user_id", user.id)
+        .eq("regno", regno)
         .single();
 
       if (error || !data) {
         document.getElementById("fullName").textContent = "Student not found";
-        document.getElementById("courseInfo").textContent = "No data found in Supabase";
+        document.getElementById("courseInfo").textContent = "No data available";
         return;
       }
 
-      // Inject real student data into DOM
+      // Inject student data
       document.getElementById("photo").src = data.photo_url || "https://placehold.co/100x100";
       document.getElementById("fullName").textContent = data.name;
       document.getElementById("regNo").textContent = data.regno;
