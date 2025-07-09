@@ -4,19 +4,14 @@
   <meta charset="UTF-8" />
   <title>NACOS Supabase Signup</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
-    * {
-      box-sizing: border-box;
-    }
-
+    * { box-sizing: border-box; }
     body {
       font-family: 'Segoe UI', sans-serif;
       background: #f0f0f0;
       padding: 1rem;
       margin: 0;
     }
-
     .container {
       max-width: 500px;
       width: 95%;
@@ -26,19 +21,16 @@
       border-radius: 12px;
       box-shadow: 0 0 20px rgba(0,0,0,0.1);
     }
-
     h2 {
       text-align: center;
       color: green;
       margin-bottom: 2rem;
       font-size: 1.8rem;
     }
-
     label {
       font-weight: bold;
       font-size: 1.1rem;
     }
-
     input, select {
       width: 100%;
       padding: 1rem;
@@ -48,7 +40,6 @@
       border: 1px solid #ccc;
       font-size: 1rem;
     }
-
     button {
       background: green;
       color: white;
@@ -61,103 +52,87 @@
       font-weight: bold;
       transition: background 0.3s ease;
     }
-
-    button:hover {
-      background: darkgreen;
-    }
-
+    button:hover { background: darkgreen; }
     #status {
       text-align: center;
       margin-top: 1rem;
       font-weight: bold;
       font-size: 1rem;
     }
-
-    @media (max-width: 480px) {
-      .container {
-        padding: 1.5rem;
-      }
-
-      h2 {
-        font-size: 1.6rem;
-      }
-
-      input, select {
-        font-size: 1rem;
-        padding: 0.9rem;
-      }
-
-      button {
-        padding: 1rem;
-        font-size: 1rem;
-      }
-    }
   </style>
 </head>
 <body>
 
-  <div class="container">
-    <h2>  
+<div class="container">
+  <h2>
     <img src="img/ictunitskillbuilderpayment.png" width="100" height="100" style="position: relative;">
-    NACOS Sign Up</h2>
-    <form id="signupForm">
-      <label for="name">Full Name</label>
-      <input type="text" id="name" required>
+    NACOS Sign Up
+  </h2>
+  <form id="signupForm">
+    <label for="name">Full Name</label>
+    <input type="text" id="name" required>
 
-      <label for="regno">Registration Number</label>
-      <input type="text" id="regno" required>
+    <label for="regno">Registration Number</label>
+    <input type="text" id="regno" required>
 
-      <label for="course">Course</label>
-      <select id="level" required>
-        <option value="">-- Select Course --</option>
-        <option value="Computer">Computer science</option>
-        <option value="Cyber security">Cyber security</option>
-        <option value="AI">Artificial Intelligence</option>
-        <option value="SE">Software Engineering</option>
-      </select>
+    <label for="course">Course</label>
+    <select id="course" required>
+      <option value="">-- Select Course --</option>
+      <option value="Computer">Computer Science</option>
+      <option value="Cyber security">Cyber Security</option>
+      <option value="AI">Artificial Intelligence</option>
+      <option value="SE">Software Engineering</option>
+    </select>
 
-      <label for="year">Year of Admission</label>
-      <input type="number" id="year" min="2010" max="2099" required>
+    <label for="year">Year of Admission</label>
+    <input type="number" id="year" min="2010" max="2099" required>
 
-      <label for="level">Level</label>
-      <select id="level" required>
-        <option value="">-- Select Level --</option>
-        <option value="100">100 Level</option>
-        <option value="200">200 Level</option>
-        <option value="300">300 Level</option>
-        <option value="400">400 Level</option>
-        <option value="500">500 Level</option>
-      </select>
+    <label for="level">Level</label>
+    <select id="level" required>
+      <option value="">-- Select Level --</option>
+      <option value="100">100 Level</option>
+      <option value="200">200 Level</option>
+      <option value="300">300 Level</option>
+      <option value="400">400 Level</option>
+      <option value="500">500 Level</option>
+    </select>
 
-      <label for="photo">Profile Picture</label>
-      <input type="file" id="photo" accept="image/*" required>
+    <label for="clubs">Clubs</label>
+    <select id="clubs" required>
+      <option value="">-- Select Club --</option>
+      <option value="Programming">Programming/AI</option>
+      <option value="CyberSecurity">CyberSecurity/Pen Testing</option>
+      <option value="Blockchain">Blockchain/Web3</option>
+      <option value="Graphics">Graphics Design</option>
+    </select>
 
-      <button type="submit">Sign Up</button>
-    </form>
-    <p id="status"></p>
-  </div>
+    <label for="photo">Profile Picture</label>
+    <input type="file" id="photo" accept="image/*" required>
 
- <script>
-  const client = supabase.createClient(
-    "https://aiygcjjztfoahsyeeswl.supabase.co",
-    "YOUR-SERVICE-ROLE-KEY" // ⚠️ Must use service role key here
-  );
+    <button type="submit">Sign Up</button>
+  </form>
+  <p id="status"></p>
+</div>
 
+<script>
   const CLOUDINARY_URL = "https://api.cloudinary.com/v1_1/dgy6x0ky4/image/upload";
   const CLOUDINARY_PRESET = "unsigned_upload";
 
-  document.getElementById('signupForm').addEventListener('submit', async function(e) {
+  // ✅ Replace with your actual working Vercel or Supabase Edge URL:
+  const EDGE_FUNCTION_URL = "https://signup-api-pink.vercel.app/api/signup";
+
+  document.getElementById('signupForm').addEventListener('submit', async function (e) {
     e.preventDefault();
     const statusText = document.getElementById('status');
     statusText.style.color = "black";
     statusText.textContent = "📤 Uploading image...";
 
-    const photo = document.getElementById('photo').files[0];
-    const formData = new FormData();
-    formData.append("file", photo);
-    formData.append("upload_preset", CLOUDINARY_PRESET);
-
     try {
+      const photo = document.getElementById('photo').files[0];
+      const formData = new FormData();
+      formData.append("file", photo);
+      formData.append("upload_preset", CLOUDINARY_PRESET);
+
       const cloudRes = await fetch(CLOUDINARY_URL, {
         method: "POST",
         body: formData
@@ -165,43 +140,33 @@
 
       const cloudData = await cloudRes.json();
       const photo_url = cloudData.secure_url;
-
       if (!photo_url) throw new Error("Cloudinary upload failed.");
 
-      statusText.textContent = "🔐 Creating Supabase auth account...";
+      statusText.textContent = "📝 Sending data to Supabase...";
 
       const name = document.getElementById('name').value;
       const regno = document.getElementById('regno').value;
       const course = document.getElementById('course').value;
       const year = parseInt(document.getElementById('year').value);
       const level = parseInt(document.getElementById('level').value);
-      const defaultPassword = "password123"; // You can let them change later
+      const clubs = document.getElementById('clubs').value;
 
-      // Step 1: Create auth user using regno as email
-      const { data: authUser, error: signupError } = await client.auth.admin.createUser({
-        email: `${regno}@nacos.com`,
-        password: defaultPassword,
-        email_confirm: true
-      });
-
-      if (signupError) throw signupError;
-
-      // Step 2: Insert into students table
-      statusText.textContent = "📝 Saving student profile...";
-
-      const { error: insertError } = await client
-        .from("students")
-        .insert([{
-          user_id: authUser.user.id,
+      const response = await fetch(EDGE_FUNCTION_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
           name,
           regno,
           course,
           year,
           level,
+          clubs,
           photo_url
-        }]);
+        })
+      });
 
-      if (insertError) throw insertError;
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error || "Unknown error");
 
       statusText.textContent = "✅ Registration complete!";
       statusText.style.color = "green";
@@ -214,7 +179,6 @@
     }
   });
 </script>
-
 
 </body>
 </html>
