@@ -117,9 +117,7 @@
 <script>
   const CLOUDINARY_URL = "https://api.cloudinary.com/v1_1/dgy6x0ky4/image/upload";
   const CLOUDINARY_PRESET = "unsigned_upload";
-
-  // ✅ Replace with your actual working Vercel or Supabase Edge URL:
-  const EDGE_FUNCTION_URL = "https://signup-api-pink.vercel.app/api/signup";
+  const EDGE_FUNCTION_URL = "https://signup-api-pink.vercel.app/api/signup"; // ✅ Replace if needed
 
   document.getElementById('signupForm').addEventListener('submit', async function (e) {
     e.preventDefault();
@@ -128,22 +126,19 @@
     statusText.textContent = "📤 Uploading image...";
 
     try {
+      // 1. Upload image to Cloudinary
       const photo = document.getElementById('photo').files[0];
       const formData = new FormData();
       formData.append("file", photo);
       formData.append("upload_preset", CLOUDINARY_PRESET);
 
-      const cloudRes = await fetch(CLOUDINARY_URL, {
-        method: "POST",
-        body: formData
-      });
-
+      const cloudRes = await fetch(CLOUDINARY_URL, { method: "POST", body: formData });
       const cloudData = await cloudRes.json();
       const photo_url = cloudData.secure_url;
-      if (!photo_url) throw new Error("Cloudinary upload failed.");
 
-      statusText.textContent = "📝 Sending data to Supabase...";
+      if (!photo_url) throw new Error("Image upload failed.");
 
+      // 2. Collect form data
       const name = document.getElementById('name').value;
       const regno = document.getElementById('regno').value;
       const course = document.getElementById('course').value;
@@ -151,6 +146,9 @@
       const level = parseInt(document.getElementById('level').value);
       const clubs = document.getElementById('clubs').value;
 
+      statusText.textContent = "📝 Submitting to Supabase...";
+
+      // 3. Send data to your API
       const response = await fetch(EDGE_FUNCTION_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -165,16 +163,23 @@
         })
       });
 
-      const result = await response.json();
-      if (!response.ok) throw new Error(result.error || "Unknown error");
-
-      statusText.textContent = "✅ Registration complete!";
-      statusText.style.color = "green";
-      document.getElementById('signupForm').reset();
+      let resultText = '';
+      try {
+        resultText = await response.text();
+        const result = JSON.parse(resultText);
+        if (!response.ok) throw new Error(result.error || "Unknown error");
+        statusText.textContent = result.message || "✅ Registration complete!";
+        statusText.style.color = "green";
+        document.getElementById('signupForm').reset();
+      } catch (err) {
+        console.error("Parse error or server error:", err);
+        statusText.textContent = "❌ " + err.message;
+        statusText.style.color = "red";
+      }
 
     } catch (err) {
-      console.error(err);
-      statusText.textContent = "❌ Error: " + err.message;
+      console.error("Form error:", err);
+      statusText.textContent = "❌ " + err.message;
       statusText.style.color = "red";
     }
   });
