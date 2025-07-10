@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <title>NACOS Supabase Signup</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" href="img/ictunitskillbuilderpayment.png">
   <style>
     * { box-sizing: border-box; }
     body {
@@ -66,7 +67,7 @@
 <div class="container">
   <h2>
     <img src="img/ictunitskillbuilderpayment.png" width="100" height="100" style="position: relative;">
-    NACOS Sign Up
+    NACOS Student Form
   </h2>
   <form id="signupForm">
     <label for="name">Full Name</label>
@@ -81,6 +82,8 @@
       <option value="Computer">Computer Science</option>
       <option value="Cyber security">Cyber Security</option>
       <option value="AI">Artificial Intelligence</option>
+      <option value="AI">Information Technology</option>
+      <option value="AI">Information Science</option>
       <option value="SE">Software Engineering</option>
     </select>
 
@@ -146,7 +149,7 @@
       const level = parseInt(document.getElementById('level').value);
       const clubs = document.getElementById('clubs').value;
 
-      statusText.textContent = "📝 Submitting to Supabase...";
+      statusText.textContent = "📝 Submitting Data...";
 
       // 3. Send data to your API
       const response = await fetch(EDGE_FUNCTION_URL, {
