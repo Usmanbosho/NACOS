@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Dashboard</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #eef1f5;
+      padding: 2rem;
+    }
+    h2 {
+      color: #2c3e50;
+      text-align: center;
+    }
+    .logout-btn {
+      float: right;
+      background: crimson;
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 2rem;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 1rem;
+      text-align: left;
+    }
+    th {
+      background-color: #3498db;
+      color: white;
+    }
+    tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+  </style>
+</head>
+<body>
+
+<h2>Admin Dashboard <button class="logout-btn" onclick="logout()">Logout</button></h2>
+<table>
+  <thead>
+    <tr>
+      <th>Photo</th>
+      <th>Name</th>
+      <th>Reg No</th>
+      <th>Course</th>
+      <th>Year</th>
+      <th>Level</th>
+      <th>Club</th>
+    </tr>
+  </thead>
+  <tbody id="studentsTableBody">
+    <!-- Student rows will be inserted here -->
+  </tbody>
+</table>
+
+<script>
+  const token = localStorage.getItem("admin_token");
+  if (!token) {
+    alert("You must be logged in as admin.");
+    window.location.href = "admin-login.html";
+  }
+
+  async function fetchStudents() {
+    try {
+      const response = await fetch("/api/get-students", {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || "Failed to load students.");
+
+      const tableBody = document.getElementById("studentsTableBody");
+      data.students.forEach(student => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td><img src="${student.photo_url}" width="60" style="border-radius: 8px;"></td>
+          <td>${student.name}</td>
+          <td>${student.regno}</td>
+          <td>${student.course}</td>
+          <td>${student.year}</td>
+          <td>${student.level}</td>
+          <td>${student.clubs}</td>
+        `;
+        tableBody.appendChild(row);
+      });
+    } catch (err) {
+      alert("❌ " + err.message);
+    }
+  }
+
+  function logout() {
+    localStorage.removeItem("admin_token");
+    window.location.href = "admin-login.html";
+  }
+
+  fetchStudents();
+</script>
+
+</body>
+</html>
