@@ -76,7 +76,7 @@
     <label for="regno">Registration Number</label>
     <input type="text" id="regno" required>
 
-    <label for="phoneno">Whatapp Number(only)</label>
+    <label for="phoneno">WhatsApp Number (11 digits only)</label>
     <input type="text" id="phoneno" required>
 
     <label for="course">Course</label>
@@ -85,8 +85,8 @@
       <option value="Computer">Computer Science</option>
       <option value="Cyber security">Cyber Security</option>
       <option value="AI">Artificial Intelligence</option>
-      <option value="AI">Information Technology</option>
-      <option value="AI">Information Science</option>
+      <option value="IT">Information Technology</option>
+      <option value="IS">Information Science</option>
       <option value="SE">Software Engineering</option>
     </select>
 
@@ -123,7 +123,7 @@
 <script>
   const CLOUDINARY_URL = "https://api.cloudinary.com/v1_1/dgy6x0ky4/image/upload";
   const CLOUDINARY_PRESET = "unsigned_upload";
-  const EDGE_FUNCTION_URL = "https://signup-api-pink.vercel.app/api/signup"; // ✅ Replace if needed
+  const EDGE_FUNCTION_URL = "https://signup-api-pink.vercel.app/api/signup"; // ✅ Update if needed
 
   document.getElementById('signupForm').addEventListener('submit', async function (e) {
     e.preventDefault();
@@ -145,14 +145,22 @@
       if (!photo_url) throw new Error("Image upload failed.");
 
       // 2. Collect form data
-      const name = document.getElementById('name').value;
-      const regno = document.getElementById('regno').value;
+      const name = document.getElementById('name').value.trim();
+      const regno = document.getElementById('regno').value.trim();
+      const phoneno = document.getElementById('phoneno').value.trim();
       const course = document.getElementById('course').value;
       const year = parseInt(document.getElementById('year').value);
       const level = parseInt(document.getElementById('level').value);
       const clubs = document.getElementById('clubs').value;
 
-      statusText.textContent = "📝 Submitting Data...";
+      // Validate phone number (Nigerian format - 11 digits)
+      if (!/^\d{11}$/.test(phoneno)) {
+        statusText.textContent = "❌ Invalid phone number. Use 11 digits only.";
+        statusText.style.color = "red";
+        return;
+      }
+
+      statusText.textContent = "📝 Submitting data...";
 
       // 3. Send data to your API
       const response = await fetch(EDGE_FUNCTION_URL, {
@@ -161,6 +169,7 @@
         body: JSON.stringify({
           name,
           regno,
+          phoneno,
           course,
           year,
           level,
