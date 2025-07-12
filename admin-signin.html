@@ -94,8 +94,8 @@
 
 <script>
   const supabase = window.supabase.createClient(
-    "https://aiygcjjztfoahsyeeswl.supabase.co",
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFpeWdjamp6dGZvYWhzeWVlc3dsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE4ODQzNjksImV4cCI6MjA2NzQ2MDM2OX0.WEgoghfUroMhoaw84x0V6LXcvf3reh6xJEI3nQQHZM8"
+    "https://aiygcjjztfoahsyeeswl.supabase.co", // 🔁 Your Supabase URL
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFpeWdjamp6dGZvYWhzeWVlc3dsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE4ODQzNjksImV4cCI6MjA2NzQ2MDM2OX0.WEgoghfUroMhoaw84x0V6LXcvf3reh6xJEI3nQQHZM8" // 🔁 Your anon public key
   );
 
   document.getElementById('adminLoginForm').addEventListener('submit', async function (e) {
@@ -107,12 +107,12 @@
     status.textContent = "🔐 Logging in...";
     status.style.color = "black";
 
-    // Check admin access
+    // ✅ Admin check using .maybeSingle() to avoid 406 error
     const { data: userRecord, error: adminCheckError } = await supabase
       .from('admin_users')
       .select('*')
       .eq('email', email)
-      .single();
+      .maybeSingle();
 
     if (adminCheckError || !userRecord || !userRecord.is_admin) {
       status.textContent = "❌ You are not authorized as an admin.";
@@ -120,7 +120,7 @@
       return;
     }
 
-    // Authenticate
+    // ✅ Login with Supabase Auth
     const { data, error } = await supabase.auth.signInWithPassword({ email, password });
 
     if (error) {
@@ -129,6 +129,7 @@
       return;
     }
 
+    // ✅ Save session for later use
     localStorage.setItem("admin_session", JSON.stringify(data.session));
     status.style.color = "green";
     status.textContent = "✅ Login successful! Redirecting...";

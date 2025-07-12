@@ -4,15 +4,16 @@
   <meta charset="UTF-8">
   <title>Admin Panel</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
     body {
       font-family: Arial, sans-serif;
       background: #eef1f5;
-      padding: 2rem;
+      padding: 1rem;
     }
-    h2 {
-      color: #2c3e50;
+    h2, h3 {
       text-align: center;
+      color: #2c3e50;
     }
     .logout-btn {
       float: right;
@@ -23,14 +24,17 @@
       border-radius: 8px;
       cursor: pointer;
     }
+    .club-section {
+      margin-top: 2rem;
+    }
     table {
       width: 100%;
       border-collapse: collapse;
-      margin-top: 2rem;
+      margin-top: 1rem;
     }
     th, td {
       border: 1px solid #ccc;
-      padding: 1rem;
+      padding: 0.8rem;
       text-align: left;
     }
     th {
@@ -43,34 +47,24 @@
     img {
       border-radius: 8px;
     }
+
+    @media (max-width: 600px) {
+      table, th, td {
+        font-size: 12px;
+      }
+    }
   </style>
 </head>
 <body>
 
 <h2>Admin Panel <button class="logout-btn" onclick="logout()">Logout</button></h2>
 
-<table>
-  <thead>
-    <tr>
-      <th>Photo</th>
-      <th>Name</th>
-      <th>Reg No</th>
-      <th>Phone No</th>
-      <th>Course</th>
-      <th>Year</th>
-      <th>Level</th>
-      <th>Club</th>
-    </tr>
-  </thead>
-  <tbody id="studentsTableBody">
-    <!-- Student rows will be inserted here -->
-  </tbody>
-</table>
+<div id="clubsContainer"></div>
 
 <script>
   const supabase = window.supabase.createClient(
-    "https://aiygcjjztfoahsyeeswl.supabase.co", // 🔁 Your Supabase URL
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFpeWdjamp6dGZvYWhzeWVlc3dsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE4ODQzNjksImV4cCI6MjA2NzQ2MDM2OX0.WEgoghfUroMhoaw84x0V6LXcvf3reh6xJEI3nQQHZM8" // 🔁 Replace with your anon key
+    "https://aiygcjjztfoahsyeeswl.supabase.co",
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFpeWdjamp6dGZvYWhzeWVlc3dsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE4ODQzNjksImV4cCI6MjA2NzQ2MDM2OX0.WEgoghfUroMhoaw84x0V6LXcvf3reh6xJEI3nQQHZM8"
   );
 
   const session = JSON.parse(localStorage.getItem("admin_session"));
@@ -89,20 +83,52 @@
       return;
     }
 
-    const tableBody = document.getElementById("studentsTableBody");
+    // Group students by club
+    const clubs = {};
     data.forEach(student => {
-      const row = document.createElement("tr");
-      row.innerHTML = `
-        <td><img src="${student.photo_url || ''}" width="60" /></td>
-        <td>${student.name}</td>
-        <td>${student.regno}</td>
-        <td>${student.phoneno}</td>
-        <td>${student.course}</td>
-        <td>${student.year}</td>
-        <td>${student.level}</td>
-        <td>${student.clubs}</td>
+      const club = student.clubs || "Unspecified";
+      if (!clubs[club]) {
+        clubs[club] = [];
+      }
+      clubs[club].push(student);
+    });
+
+    const container = document.getElementById("clubsContainer");
+
+    // Render tables per club
+    Object.entries(clubs).forEach(([clubName, members]) => {
+      const section = document.createElement("div");
+      section.className = "club-section";
+      section.innerHTML = `
+        <h3>${clubName}</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Photo</th>
+              <th>Name</th>
+              <th>Reg No</th>
+              <th>Phone No</th>
+              <th>Course</th>
+              <th>Year</th>
+              <th>Level</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${members.map(student => `
+              <tr>
+                <td><img src="${student.photo_url || ''}" width="60" /></td>
+                <td>${student.name}</td>
+                <td>${student.regno}</td>
+                <td>${student.phoneno}</td>
+                <td>${student.course}</td>
+                <td>${student.year}</td>
+                <td>${student.level}</td>
+              </tr>
+            `).join("")}
+          </tbody>
+        </table>
       `;
-      tableBody.appendChild(row);
+      container.appendChild(section);
     });
   }
 
