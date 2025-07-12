@@ -2,29 +2,48 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin Sign In</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       font-family: Arial, sans-serif;
       background: #f0f0f0;
       padding: 2rem;
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
     }
+
     .login-box {
+      width: 100%;
       max-width: 400px;
-      margin: 0 auto;
       background: white;
       padding: 2rem;
       border-radius: 10px;
-      box-shadow: 0 0 20px rgba(0,0,0,0.1);
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
     }
+
+    .login-box h2 {
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+
     input {
       width: 100%;
       padding: 1rem;
       margin-bottom: 1rem;
       border: 1px solid #ccc;
       border-radius: 8px;
+      font-size: 1rem;
     }
+
     button {
       padding: 1rem;
       width: 100%;
@@ -33,12 +52,31 @@
       border: none;
       border-radius: 8px;
       font-weight: bold;
+      font-size: 1rem;
       cursor: pointer;
     }
+
     #status {
       margin-top: 1rem;
       text-align: center;
       font-weight: bold;
+      font-size: 0.95rem;
+    }
+
+    /* 📱 Mobile-friendly adjustments */
+    @media (max-width: 480px) {
+      body {
+        padding: 1rem;
+      }
+
+      .login-box {
+        padding: 1.5rem;
+      }
+
+      input, button {
+        font-size: 1rem;
+        padding: 0.85rem;
+      }
     }
   </style>
 </head>
@@ -55,10 +93,9 @@
 </div>
 
 <script>
-  // ✅ Initialize Supabase client
   const supabase = window.supabase.createClient(
-    "https://aiygcjjztfoahsyeeswl.supabase.co", // 🔁 Your Supabase project URL
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFpeWdjamp6dGZvYWhzeWVlc3dsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE4ODQzNjksImV4cCI6MjA2NzQ2MDM2OX0.WEgoghfUroMhoaw84x0V6LXcvf3reh6xJEI3nQQHZM8" // 🔁 Replace with your actual anon public key
+    "https://aiygcjjztfoahsyeeswl.supabase.co",
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFpeWdjamp6dGZvYWhzeWVlc3dsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE4ODQzNjksImV4cCI6MjA2NzQ2MDM2OX0.WEgoghfUroMhoaw84x0V6LXcvf3reh6xJEI3nQQHZM8"
   );
 
   document.getElementById('adminLoginForm').addEventListener('submit', async function (e) {
@@ -70,7 +107,7 @@
     status.textContent = "🔐 Logging in...";
     status.style.color = "black";
 
-    // 🛡️ Check admin_users table
+    // Check admin access
     const { data: userRecord, error: adminCheckError } = await supabase
       .from('admin_users')
       .select('*')
@@ -83,7 +120,7 @@
       return;
     }
 
-    // 🔐 Sign in with Supabase Auth
+    // Authenticate
     const { data, error } = await supabase.auth.signInWithPassword({ email, password });
 
     if (error) {
