@@ -3,61 +3,112 @@
 <head>
   <meta charset="UTF-8">
   <title>Admin Panel</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       font-family: Arial, sans-serif;
       background: #eef1f5;
       padding: 1rem;
+      margin: 0;
     }
-    h2, h3 {
-      text-align: center;
+
+    h2 {
       color: #2c3e50;
+      text-align: center;
+      margin-top: 1rem;
     }
+
     .logout-btn {
-      float: right;
+      position: fixed;
+      top: 10px;
+      right: 10px;
       background: crimson;
       color: white;
       border: none;
-      padding: 0.5rem 1rem;
+      padding: 0.6rem 1.2rem;
       border-radius: 8px;
+      font-weight: bold;
       cursor: pointer;
+      z-index: 1000;
     }
+
     .club-section {
       margin-top: 2rem;
     }
+
+    .club-section h3 {
+      margin-bottom: 0.5rem;
+      color: #34495e;
+      text-align: center;
+    }
+
+    .table-wrapper {
+      overflow-x: auto;
+      margin-bottom: 2rem;
+    }
+
     table {
       width: 100%;
       border-collapse: collapse;
-      margin-top: 1rem;
+      min-width: 700px;
     }
+
     th, td {
       border: 1px solid #ccc;
       padding: 0.8rem;
       text-align: left;
     }
+
     th {
       background-color: #3498db;
       color: white;
     }
+
     tr:nth-child(even) {
       background-color: #f9f9f9;
     }
+
     img {
       border-radius: 8px;
     }
 
-    @media (max-width: 600px) {
-      table, th, td {
+    @media (max-width: 768px) {
+      th, td {
+        padding: 0.5rem;
+        font-size: 13px;
+      }
+
+      table {
+        min-width: 600px;
+      }
+
+      .logout-btn {
+        padding: 0.4rem 0.8rem;
+        font-size: 14px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      th, td {
         font-size: 12px;
+      }
+
+      .logout-btn {
+        font-size: 12px;
+        padding: 0.3rem 0.6rem;
       }
     }
   </style>
 </head>
 <body>
 
-<h2>Admin Panel <button class="logout-btn" onclick="logout()">Logout</button></h2>
+<h2>Admin Panel</h2>
+<button class="logout-btn" onclick="logout()">Logout</button>
 
 <div id="clubsContainer"></div>
 
@@ -83,50 +134,49 @@
       return;
     }
 
-    // Group students by club
     const clubs = {};
     data.forEach(student => {
       const club = student.clubs || "Unspecified";
-      if (!clubs[club]) {
-        clubs[club] = [];
-      }
+      if (!clubs[club]) clubs[club] = [];
       clubs[club].push(student);
     });
 
     const container = document.getElementById("clubsContainer");
+    container.innerHTML = "";
 
-    // Render tables per club
     Object.entries(clubs).forEach(([clubName, members]) => {
       const section = document.createElement("div");
       section.className = "club-section";
       section.innerHTML = `
         <h3>${clubName}</h3>
-        <table>
-          <thead>
-            <tr>
-              <th>Photo</th>
-              <th>Name</th>
-              <th>Reg No</th>
-              <th>Phone No</th>
-              <th>Course</th>
-              <th>Year</th>
-              <th>Level</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${members.map(student => `
+        <div class="table-wrapper">
+          <table>
+            <thead>
               <tr>
-                <td><img src="${student.photo_url || ''}" width="60" /></td>
-                <td>${student.name}</td>
-                <td>${student.regno}</td>
-                <td>${student.phoneno}</td>
-                <td>${student.course}</td>
-                <td>${student.year}</td>
-                <td>${student.level}</td>
+                <th>Photo</th>
+                <th>Name</th>
+                <th>Reg No</th>
+                <th>Phone No</th>
+                <th>Course</th>
+                <th>Year</th>
+                <th>Level</th>
               </tr>
-            `).join("")}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              ${members.map(student => `
+                <tr>
+                  <td><img src="${student.photo_url || ''}" width="60" /></td>
+                  <td>${student.name}</td>
+                  <td>${student.regno}</td>
+                  <td>${student.phoneno}</td>
+                  <td>${student.course}</td>
+                  <td>${student.year}</td>
+                  <td>${student.level}</td>
+                </tr>
+              `).join("")}
+            </tbody>
+          </table>
+        </div>
       `;
       container.appendChild(section);
     });
