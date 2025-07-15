@@ -50,6 +50,37 @@
     .clickable-card:hover {
       transform: scale(1.02);
     }
+      @media (max-width: 991.98px) {
+        .ftco-navbar-light {
+          background-color: rgba(84, 255, 62, 0.5) !important;
+        }
+        .ftco-navbar-light .navbar-nav .nav-link {
+          color: black !important;
+        }
+        .navbar-toggler {
+          border-color: white;
+        }
+        .navbar-brand .txt{
+          display: none;
+        }
+        .navbar-toggler span,
+        .navbar-toggler b {
+          color: white !important;
+        }
+        .top .icon,
+        .top .text {
+          color: white !important;
+          display: inline-block !important;
+        }
+        .ftco-footer .ftco-footer-social a span {
+          color: white !important;
+        }
+        .register-link a {
+          color: white !important;
+          font-weight: bold;
+        }
+      }
+    </style>
   </style>
 </head>
 <body data-spy="scroll" data-target=".site-navbar-target" data-offset="300">
@@ -78,7 +109,8 @@
 <nav class="navbar box navbar-expand-lg navbar-green ftco_navbar bg-green ftco-navbar-light site-navbar-target" id="ftco-navbar">
   <div class="container">
     <a class="navbar-brand" href="index.html">
-      <img src="img/ictunitskillbuilderpayment.png" width="60" height="60" style="border-radius: 100px;"> NACOS - ATBU
+      <img src="img/ictunitskillbuilderpayment.png" width="60" height="60" style="border-radius: 100px;">
+      <div class="txt">NACOS - ATBU</div> 
     </a>
     <button class="navbar-toggler js-fh5co-nav-toggle fh5co-nav-toggle" type="button" data-toggle="collapse" data-target="#ftco-nav" aria-controls="ftco-nav" aria-expanded="false" aria-label="Toggle navigation">
       <b><i class="fas fa-bars" style="color: black;"></i></b>
@@ -93,6 +125,9 @@
         <li class="nav-item"><a href="staffs.html" class="nav-link"><span>Staffs</span></a></li>
         <li class="nav-item"><a href="about.html" class="nav-link"><span>About Us</span></a></li>
         <li class="nav-item"><a href="contact.html" class="nav-link"><span>Contact Us</span></a></li>
+        <!-- Show Sign In/Sign Up inside navbar menu only on mobile -->
+        <li class="nav-item d-block d-lg-none"><a href="signup.html" class="nav-link"><span>Sign Up</span></a></li>
+        <li class="nav-item d-block d-lg-none"><a href="admin-signin.html" class="nav-link"><span>Sign In</span></a></li>
       </ul>
     </div>
   </div>
