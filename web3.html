@@ -1,8 +1,7 @@
-<!-- Paste starts here -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>Web3/Blockchain Club - NACOS ATBU</title>
+  <title>AI Club - NACOS ATBU</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -12,16 +11,23 @@
   <link rel="stylesheet" href="css/aos.css">
   <link rel="stylesheet" href="css/style.css">
 
-  <!-- Favicons and Fonts -->
+
+<!-- Favicons and Fonts -->
   <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
   <link href="img/ictunitskillbuilderpayment.png" rel="icon">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" />
+
+  <!-- CSS Files -->
   <link rel="stylesheet" href="css/open-iconic-bootstrap.min.css">
+  <link rel="stylesheet" href="css/animate.css">
   <link rel="stylesheet" href="css/owl.carousel.min.css">
   <link rel="stylesheet" href="css/owl.theme.default.min.css">
   <link rel="stylesheet" href="css/magnific-popup.css">
+  <link rel="stylesheet" href="css/aos.css">
   <link rel="stylesheet" href="css/ionicons.min.css">
   <link rel="stylesheet" href="css/flaticon.css">
   <link rel="stylesheet" href="css/icomoon.css">
+  <link rel="stylesheet" href="css/style.css">
 
   <style>
     body {
@@ -39,7 +45,8 @@
       position: absolute;
       top: 0; left: 0;
       width: 100%; height: 100%;
-      background: rgba(5, 12, 5, 0.6);
+      font-family: 'Times New Roman', Times, serif;
+      background: rgba(6, 20, 6, 0.6);
     }
     .club-header h2 {
       position: relative;
@@ -71,8 +78,8 @@
       transform: scale(1.05);
     }
     .person-card img {
-      width: 120px;
-      height: 120px;
+      width: 200px;
+      height: 200px;
       border-radius: 100px;
       margin-top: 20px;
     }
@@ -96,6 +103,7 @@
       text-align: center;
       margin-bottom: 50px;
     }
+
     @media (max-width: 991.98px) {
       .ftco-navbar-light {
         background-color: green !important;
@@ -109,7 +117,7 @@
         color: white !important;
       }
     }
-     @media (max-width: 991.98px) {
+      @media (max-width: 991.98px) {
         .ftco-navbar-light {
           background-color: rgba(84, 255, 62, 0.5) !important;
         }
@@ -139,8 +147,24 @@
           font-weight: bold;
         }
       }
+    .card-title {
+      font-weight: bold;
+    }
+    .hero-wrap {
+      background-size: cover;
+      background-position: center center;
+    }
+    .clickable-card {
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+    .clickable-card:hover {
+      transform: scale(1.02);
+    }
   </style>
 </head>
+<body>
+
 <body data-spy="scroll" data-target=".site-navbar-target" data-offset="300">
 
   <!-- Topbar -->
@@ -162,41 +186,44 @@
     </div>
   </div>
 
-  <!-- Navbar -->
-  <nav class="navbar box navbar-expand-lg navbar-green ftco_navbar bg-green ftco-navbar-light site-navbar-target" id="ftco-navbar">
-    <div class="container">
-      <a class="navbar-brand" href="index.html">
-        <img src="img/ictunitskillbuilderpayment.png" width="60" height="60" style="border-radius: 100px;"> <div class="txt">
-          <!-- NACOS - ATBU -->
-        </div>
-      </a>
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#ftco-nav">
-        <b><i class="fas fa-bars" style="color: black;"></i></b>
-      </button>
-      <div class="collapse navbar-collapse" id="ftco-nav">
-        <ul class="navbar-nav nav ml-auto">
-          <li class="nav-item"><a href="index.html" class="nav-link"><span>Home</span></a></li>
-          <li class="nav-item"><a href="excos.html" class="nav-link"><span>Excos</span></a></li>
-          <li class="nav-item"><a href="clubs.html" class="nav-link"><span>Clubs</span></a></li>
-          <li class="nav-item"><a href="staffs.html" class="nav-link"><span>Staffs</span></a></li>
-          <li class="nav-item"><a href="about.html" class="nav-link"><span>About Us</span></a></li>
-          <li class="nav-item"><a href="contact.html" class="nav-link"><span>Contact Us</span></a></li>
-          <!-- Show Sign In/Sign Up inside navbar menu only on mobile -->
+  
+ <!-- Navbar -->
+<nav class="navbar box navbar-expand-lg navbar-green ftco_navbar bg-green ftco-navbar-light site-navbar-target" id="ftco-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="index.html">
+      <img src="img/ictunitskillbuilderpayment.png" width="60" height="60" style="border-radius: 100px;">
+      <!-- <div class="txt">NACOS - ATBU</div> -->
+      
+    </a>
+    <button class="navbar-toggler js-fh5co-nav-toggle fh5co-nav-toggle" type="button" data-toggle="collapse" data-target="#ftco-nav" aria-controls="ftco-nav" aria-expanded="false" aria-label="Toggle navigation">
+      <b><i class="fas fa-bars" style="color: black;"></i></b>
+    </button>
+
+    <div class="collapse navbar-collapse" id="ftco-nav">
+      <ul class="navbar-nav nav ml-auto">
+        <li class="nav-item"><a href="index.html" class="nav-link"><span>Home</span></a></li>
+        <li class="nav-item"><a href="excos.html" class="nav-link"><span>Excos</span></a></li>
+        
+        <li class="nav-item"><a href="clubs.html" class="nav-link"><span>Clubs</span></a></li>
+        <li class="nav-item"><a href="staffs.html" class="nav-link"><span>Staffs</span></a></li>
+        <li class="nav-item"><a href="about.html" class="nav-link"><span>About Us</span></a></li>
+        <li class="nav-item"><a href="contact.html" class="nav-link"><span>Contact Us</span></a></li>
+        <!-- Show Sign In/Sign Up inside navbar menu only on mobile -->
         <li class="nav-item d-block d-lg-none"><a href="signup.html" class="nav-link"><span>Sign Up</span></a></li>
         <li class="nav-item d-block d-lg-none"><a href="admin-signin.html" class="nav-link"><span>Sign In</span></a></li>
-        </ul>
-      </div>
+      </ul>
     </div>
-  </nav>
+  </div>
+</nav>
 
-  <!-- Hero -->
-  <div class="club-header">
-    <h2>Web3 / Blockchain Club</h2>
+ 
+ <div class="club-header">x
   </div>
 
   <!-- Club Description -->
   <section class="club-section" data-aos="fade-up">
     <div class="club-description">
+    <h2>Web3 / Blockchain Club</h2>
       The Web3/Blockchain Club aims to explore decentralized technologies, educate members on blockchain, smart contracts, and Web3 innovations to build a decentralized future.
     </div>
   </section>
@@ -219,58 +246,57 @@
   </section>
 
   <!-- Members -->
-  <section class="club-section" data-aos="fade-up">
-    <h3 class="section-title">Club Members</h3>
-    <div class="members">
-      <div class="person-card">
-        <img src="img/avat4.jpg" alt="Member">
-        <h5>Alex Byte</h5>
-        <p>Member</p>
-      </div>
-      <div class="person-card">
-        <img src="img/avat4.jpg" alt="Member">
-        <h5>Lisa Loop</h5>
-        <p>Member</p>
-      </div>
-      <div class="person-card">
-        <img src="img/avat4.jpg" alt="Member">
-        <h5>David Code</h5>
-        <p>Member</p>
-      </div>
-<div class="person-card">
-        <img src="img/avat3.jpg" alt="Member">
-        <h5>David Code</h5>
-        <p>Member</p>
-      </div>
-<div class="person-card">
-        <img src="img/avat3.jpg" alt="Member">
-        <h5>David Code</h5>
-        <p>Member</p>
-      </div>
-<div class="person-card">
-        <img src="img/avat3.jpg" alt="Member">
-        <h5>David Code</h5>
-        <p>Member</p>
-      </div>
-<div class="person-card">
-        <img src="img/avat3.jpg" alt="Member">
-        <h5>David Code</h5>
-        <p>Member</p>
-      </div>
-<div class="person-card">
-        <img src="img/avat3.jpg" alt="Member">
-        <h5>David Code</h5>
-        <p>Member</p>
-      </div>
-      <div class="person-card">
-        <img src="img/avat3.jpg" alt="Member">
-        <h5>Sarah Debug</h5>
-        <p>Member</p>
-      </div>
-    </div>
-  </section>
+  <!-- Members -->
+<section class="club-section" data-aos="fade-up">
+  <h3 class="section-title">Club Members</h3>
+  <div id="programmingClubMembers" class="members">
+    <!-- Members will be loaded here via Supabase -->
+  </div>
+</section>
 
-  <!-- Footer -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+<script>
+  const supabase = window.supabase.createClient(
+    "https://aiygcjjztfoahsyeeswl.supabase.co",
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFpeWdjamp6dGZvYWhzeWVlc3dsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE4ODQzNjksImV4cCI6MjA2NzQ2MDM2OX0.WEgoghfUroMhoaw84x0V6LXcvf3reh6xJEI3nQQHZM8"
+  );
+
+  async function loadProgrammingClubMembers() {
+    const { data, error } = await supabase
+      .from("students")
+      .select("name, photo_url, clubs")
+      .like("clubs", "%Blockchain%");
+
+    if (error) {
+      console.error("❌ Failed to load members:", error.message);
+      return;
+    }
+
+    const container = document.getElementById("programmingClubMembers");
+    container.innerHTML = ""; // Clear existing
+
+    if (!data || data.length === 0) {
+      container.innerHTML = "<p>No members found for Programming Club.</p>";
+      return;
+    }
+
+    data.forEach(member => {
+      const card = document.createElement("div");
+      card.className = "person-card";
+      card.innerHTML = `
+        <img src="${member.photo_url || 'img/avat3.jpg'}" alt="${member.name}">
+        <h5>${member.name}</h5>
+        <p>Member</p>
+      `;
+      container.appendChild(card);
+    });
+  }
+
+  document.addEventListener("DOMContentLoaded", loadProgrammingClubMembers);
+</script>
+
+
+ <!-- Footer --!>
   <footer class="ftco-footer ftco-section img" style="background-image: url(images/footer-bg.jpg);">
     <div class="overlay"></div>
     <div class="container-fluid px-md-5">
@@ -290,13 +316,13 @@
           <div class="ftco-footer-widget mb-4 ml-md-4">
             <h2 class="ftco-heading-2">Links</h2>
             <ul class="list-unstyled">
-              <li><a href="index.html" style="color: green;">Home</a></li>
-              <li><a href="excos.html" style="color: green;">Excos</a></li>
-              <li><a href="departments.html" style="color: green;">Departments</a></li>
-              <li><a href="clubs.html" style="color: green;">Clubs</a></li>
-              <li><a href="staffs.html" style="color: green;">Staffs</a></li>
-              <li><a href="about.html" style="color: green;">About Us</a></li>
-              <li><a href="contact.html" style="color: green;">Contact Us</a></li>
+              <li><a href="index.html" style="color: green;"><span class="icon-long-arrow-right mr-1"></span>Home</a></li>
+              <li><a href="excos.html" style="color: green;"><span class="icon-long-arrow-right mr-1"></span>Excos</a></li>
+              <li><a href="departments.html" style="color: green;"><span class="icon-long-arrow-right mr-1"></span>Departments</a></li>
+              <li><a href="clubs.html" style="color: green;"><span class="icon-long-arrow-right mr-1"></span>Clubs</a></li>
+              <li><a href="staffs.html" style="color: green;"><span class="icon-long-arrow-right mr-1"></span>Staffs</a></li>
+              <li><a href="about.html" style="color: green;"><span class="icon-long-arrow-right mr-1"></span>About Us</a></li>
+              <li><a href="contact.html" style="color: green;"><span class="icon-long-arrow-right mr-1"></span>Contact Us</a></li>
             </ul>
           </div>
         </div>
@@ -315,13 +341,22 @@
       </div>
       <div class="row">
         <div class="col-md-12 text-center">
-          &copy; <script>document.write(new Date().getFullYear());</script> NACOS - ATBU. All rights reserved.
+          Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved |
+          <a href="#" target="_blank" style="color: green;">NACOS</a>
         </div>
       </div>
     </div>
   </footer>
 
-  <!-- Scripts -->
+  <!-- Loader -->
+  <div id="ftco-loader" class="show fullscreen">
+    <svg class="circular" width="48px" height="48px">
+      <circle class="path-bg" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke="#eeeeee"/>
+      <circle class="path" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke="#F96D00"/>
+    </svg>
+  </div>
+
+  <!-- JS Files -->
   <script src="js/jquery.min.js"></script>
   <script src="js/jquery-migrate-3.0.1.min.js"></script>
   <script src="js/popper.min.js"></script>
@@ -336,9 +371,11 @@
   <script src="js/scrollax.min.js"></script>
   <script src="js/main.js"></script>
 
+
+  <!-- AOS Animation JS -->
+  <script src="js/aos.js"></script>
   <script>
     AOS.init({ duration: 1000 });
   </script>
 </body>
 </html>
-<!-- Paste ends here -->
