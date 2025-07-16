@@ -192,7 +192,7 @@
   <div class="container">
     <a class="navbar-brand" href="index.html">
       <img src="img/ictunitskillbuilderpayment.png" width="60" height="60" style="border-radius: 100px;">
-      <div class="txt">NACOS - ATBU</div>
+      <!-- <div class="txt">NACOS - ATBU</div> -->
       
     </a>
     <button class="navbar-toggler js-fh5co-nav-toggle fh5co-nav-toggle" type="button" data-toggle="collapse" data-target="#ftco-nav" aria-controls="ftco-nav" aria-expanded="false" aria-label="Toggle navigation">
@@ -246,56 +246,55 @@
   </section>
 
   <!-- Members -->
-  <section class="club-section" data-aos="fade-up">
-    <h3 class="section-title">Club Members</h3>
-    <div class="members">
-      <div class="person-card">
-        <img src="img/avat4.jpg" alt="Member">
-        <h5>Alex Byte</h5>
+  <!-- Members -->
+<section class="club-section" data-aos="fade-up">
+  <h3 class="section-title">Club Members</h3>
+  <div id="programmingClubMembers" class="members">
+    <!-- Members will be loaded here via Supabase -->
+  </div>
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+<script>
+  const supabase = window.supabase.createClient(
+    "https://aiygcjjztfoahsyeeswl.supabase.co",
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFpeWdjamp6dGZvYWhzeWVlc3dsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE4ODQzNjksImV4cCI6MjA2NzQ2MDM2OX0.WEgoghfUroMhoaw84x0V6LXcvf3reh6xJEI3nQQHZM8"
+  );
+
+  async function loadProgrammingClubMembers() {
+    const { data, error } = await supabase
+      .from("students")
+      .select("name, photo_url, clubs")
+      .like("clubs", "%Programming/AI%");
+
+    if (error) {
+      console.error("❌ Failed to load members:", error.message);
+      return;
+    }
+
+    const container = document.getElementById("programmingClubMembers");
+    container.innerHTML = ""; // Clear existing
+
+    if (!data || data.length === 0) {
+      container.innerHTML = "<p>No members found for Programming Club.</p>";
+      return;
+    }
+
+    data.forEach(member => {
+      const card = document.createElement("div");
+      card.className = "person-card";
+      card.innerHTML = `
+        <img src="${member.photo_url || 'img/avat3.jpg'}" alt="${member.name}">
+        <h5>${member.name}</h5>
         <p>Member</p>
-      </div>
-      <div class="person-card">
-        <img src="img/avat4.jpg" alt="Member">
-        <h5>Lisa Loop</h5>
-        <p>Member</p>
-      </div>
-      <div class="person-card">
-        <img src="img/avat4.jpg" alt="Member">
-        <h5>David Code</h5>
-        <p>Member</p>
-      </div>
-<div class="person-card">
-        <img src="img/avat3.jpg" alt="Member">
-        <h5>David Code</h5>
-        <p>Member</p>
-      </div>
-<div class="person-card">
-        <img src="img/avat3.jpg" alt="Member">
-        <h5>David Code</h5>
-        <p>Member</p>
-      </div>
-<div class="person-card">
-        <img src="img/avat3.jpg" alt="Member">
-        <h5>David Code</h5>
-        <p>Member</p>
-      </div>
-<div class="person-card">
-        <img src="img/avat3.jpg" alt="Member">
-        <h5>David Code</h5>
-        <p>Member</p>
-      </div>
-<div class="person-card">
-        <img src="img/avat3.jpg" alt="Member">
-        <h5>David Code</h5>
-        <p>Member</p>
-      </div>
-      <div class="person-card">
-        <img src="img/avat3.jpg" alt="Member">
-        <h5>Sarah Debug</h5>
-        <p>Member</p>
-      </div>
-    </div>
-  </section>
+      `;
+      container.appendChild(card);
+    });
+  }
+
+  document.addEventListener("DOMContentLoaded", loadProgrammingClubMembers);
+</script>
+
 
  <!-- Footer --!>
   <footer class="ftco-footer ftco-section img" style="background-image: url(images/footer-bg.jpg);">
