@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -262,7 +263,7 @@
   );
 
   async function loadProgrammingClubMembers() {
-    const { data, error } = await supabaseProgramming
+    const { data, error } = await supabase
       .from("students")
       .select("name, photo_url, clubs")
       .like("clubs", "%Blockchain%");
